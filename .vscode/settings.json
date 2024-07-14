@@ -1,0 +1,20 @@
+{
+  "peacock.remoteColor": "#215732",
+  "eslint.format.enable": true,
+  "editor.formatOnSave": true,
+  "[javascript]": {
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+  },
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit",
+    "source.fixAll": "explicit",
+    "source.organizeImports": "explicit"
+  },
+  "typescript.preferences.importModuleSpecifier": "relative",
+}
