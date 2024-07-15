@@ -1,0 +1,50 @@
+@startuml context diagram for "Álbum de Figurinhas Online"
+!include <C4/C4_Context>
+'LAYOUT CONFIG
+left to right direction
+skinparam packageStyle rectangle
+'ACTORS
+actor user as "Usuário Comum"
+actor admin as "Usuário Admin"
+'SYSTEMS
+package "Sistema Álbum de Figurinhas Online" {
+    [Álbum de Figurinhas Online] as album
+    [Painel Admin] as adminPanel
+    [Sistema de Trocas] as tradeSystem
+}
+package "Serviços Externos" {
+    [Serviços GCP] as gcpServices
+    [Sistema de Login (GCP)] as loginSystem
+    [Sistema de Pagamento] as paymentSystem
+    [Sistema de Notificações Push] as pushNotificationSystem
+    [Redes Sociais] as socialMedia
+    [Sistema de Promoções] as promotionSystem
+}
+'INTERACTIONS - Usuário Comum
+user --> loginSystem : Faz login
+user --> album : Escolhe método de pagamento para pacotes de figurinhas
+user --> album : Abre pacotes de figurinhas
+user --> album : Navega no álbum
+user --> album : Altera informações do perfil
+user --> paymentSystem : Compra com cartão de crédito
+user --> tradeSystem : Compra pacote com pó
+user --> tradeSystem : Transforma figurinhas repetidas em pó
+user --> tradeSystem : Compra figurinhas faltantes com pó
+user --> tradeSystem : Troca pó por figurinhas
+user --> tradeSystem : Salva logs de transações de trocas
+user --> socialMedia : Compartilha conquistas
+user --> pushNotificationSystem : Recebe notificações push
+'INTERACTIONS - Usuário Admin
+admin --> loginSystem : Faz login
+admin --> adminPanel : Cadastra coleções
+admin --> adminPanel : Cadastra figurinhas
+admin --> adminPanel : Enviar pacotes de figurinhas para usuários
+admin --> adminPanel : Enviar pó para usuários
+admin --> adminPanel : Visualiza logs de transações de trocas
+admin --> adminPanel : Visualiza logs de compras
+'INTERACTIONS - Sistemas
+album --> gcpServices : Utiliza para armazenamento e análise
+album --> paymentSystem : Processa compras de pacotes com cartão de crédito
+album --> pushNotificationSystem : Envia notificações push aos usuários
+album --> promotionSystem : Gerencia e aplica promoções
+@enduml
