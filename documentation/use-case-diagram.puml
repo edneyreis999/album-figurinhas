@@ -1,0 +1,73 @@
+@startuml Use Case Diagram for "Álbum de Figurinhas Online"
+actor "Usuário Comum" as UC
+actor "Usuário Admin" as UA
+
+usecase UC01 as "Fazer login"
+usecase UC02 as "Navegar no álbum"
+usecase UC02_1 as "Navegar por páginas do álbum"
+usecase UC02_2 as "Filtro por coleção"
+usecase UC02_3 as "Filtro por nome da figurinha"
+usecase UC02_4 as "Filtro por figurinhas faltantes"
+usecase UC02_5 as "Filtro por figurinhas obtidas"
+usecase UC03 as "Abrir pacotes de figurinhas"
+usecase UC04 as "Transformar figurinhas repetidas em pó"
+usecase UC05 as "Comprar figurinhas com pó"
+usecase UC06 as "Compartilhar conquistas nas redes sociais"
+usecase UC07 as "Receber notificações push"
+usecase UC08 as "Alterar informações do perfil"
+
+usecase UA01 as "Fazer login"
+usecase UA02 as "Cadastrar coleções"
+usecase UA02_1 as "Publicar coleções"
+usecase UA02_2 as "Desativar coleções"
+usecase UA02_3 as "Deletar coleções não publicadas"
+usecase UA02_4 as "Editar coleções não publicadas"
+usecase UA03 as "Cadastrar figurinhas"
+usecase UA03_1 as "Publicar figurinhas"
+usecase UA03_2 as "Desativar figurinhas"
+usecase UA03_3 as "Deletar figurinhas não publicadas"
+usecase UA03_4 as "Editar figurinhas não publicadas"
+usecase UA04 as "Enviar pacotes de figurinhas para usuários"
+usecase UA05 as "Enviar pó para usuários"
+usecase UA06 as "Visualizar logs de transações de trocas"
+usecase UA07 as "Visualizar logs de compras"
+
+UC --> UC01
+UC --> UC02
+UC --> UC02_1
+UC --> UC02_2
+UC --> UC02_3
+UC --> UC02_4
+UC --> UC02_5
+UC --> UC03
+UC --> UC04
+UC --> UC05
+UC --> UC06
+UC --> UC07
+UC --> UC08
+
+UA --> UA01
+UA --> UA02
+UA --> UA02_1
+UA --> UA02_2
+UA --> UA02_3
+UA --> UA02_4
+UA --> UA03
+UA --> UA03_1
+UA --> UA03_2
+UA --> UA03_3
+UA --> UA03_4
+UA --> UA04
+UA --> UA05
+UA --> UA06
+UA --> UA07
+
+'Layout Adjustment
+left to right direction
+skinparam usecase {
+  BackgroundColor<<UC>> Yellow
+  BorderColor<<UC>> Black
+  BackgroundColor<<UA>> LightBlue
+  BorderColor<<UA>> Black
+}
+@enduml

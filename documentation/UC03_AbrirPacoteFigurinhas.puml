@@ -1,0 +1,43 @@
+@startuml Sequence Diagram for "Abrir Pacote de Figurinhas"
+actor User
+participant "Sistema de Login" as LoginSystem
+participant "Álbum de Figurinhas Online" as Album
+participant "Sistema de Trocas" as TradeSystem
+participant "Sistema de Logs" as LogSystem
+
+User -> LoginSystem: Faz login
+LoginSystem --> User: Confirmação de login
+
+User -> Album: Navega no álbum
+Album --> User: Exibe álbum
+
+User -> Album: Abre menu de pacotes de figurinhas
+Album --> User: Exibe quantidade de pacotes disponíveis e suas coleções
+
+alt Verifica se há pacotes disponíveis
+    Album -> Album: Verifica pacotes disponíveis
+    else Pacotes disponíveis
+        User -> Album: Arrasta pacote disponível para abrir
+        Album -> TradeSystem: Registra abertura de pacote
+        TradeSystem -> Album: Confirmação de registro
+        Album -> LogSystem: Registra log de abertura de pacote
+
+        Album -> User: Exibe figurinhas obtidas
+        alt Figurinhas de raridade gold
+            Album -> User: Exibe figurinhas de costas para virar
+        end
+
+        alt Figurinhas repetidas
+            Album -> User: Exibe botão para trocar figurinhas repetidas em pó
+        end
+    else Sem pacotes disponíveis
+        Album -> User: Não há pacotes disponíveis para abrir
+        alt Permitir compra de pacotes com pó
+            User -> Album: Compra pacote com pó
+            Album -> TradeSystem: Registra compra de pacote
+            TradeSystem -> Album: Confirmação de compra
+            Album -> User: Atualiza quantidade de pacotes disponíveis
+            Album -> LogSystem: Registra log de compra de pacote
+        end
+end
+@enduml

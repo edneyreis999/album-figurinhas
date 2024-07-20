@@ -1,0 +1,44 @@
+@startuml Sequence Diagram for "Transformar Figurinhas Repetidas em Pó"
+actor User
+participant "Álbum de Figurinhas Online" as Album
+participant "Sistema de Trocas" as TradeSystem
+participant "Sistema de Logs" as LogSystem
+
+User -> LoginSystem: Faz login
+LoginSystem --> User: Confirmação de login
+
+User -> Album: Navega no álbum
+Album --> User: Exibe álbum com figurinhas repetidas destacadas
+
+alt Tem figurinhas repetidas
+    User -> Album: Seleciona figurinha repetida
+    Album -> TradeSystem: Verifica se a figurinha é repetida
+    
+    alt Figurinhas repetidas
+        Album -> User: Exibe botão de conversão
+        User -> Album: Clica no botão de conversão
+        Album -> TradeSystem: Calcula pontos de pó
+        User -> Album: Confirma conversão
+        Album -> TradeSystem: Converte figurinhas em pó
+        TradeSystem -> Album: Confirmação de conversão
+        Album -> User: Atualiza saldo de pó e remove figurinha
+        Album -> LogSystem: Registra log de conversão de figurinha em pó
+    else Não há figurinhas repetidas
+        TradeSystem -> Album: Informa que não há figurinhas repetidas
+        Album -> User: Não libera botão de conversão
+    end
+else Não tem figurinhas repetidas
+    Album -> User: Não exibe nenhuma figurinha com borda amarela
+end
+
+alt Converter todas as repetidas
+    User -> Album: Clica no ícone de pó na tela inicial
+    Album -> TradeSystem: Calcula pontos de pó para todas as figurinhas repetidas
+    Album -> User: Exibe pontos de pó calculados
+    User -> Album: Confirma conversão
+    Album -> TradeSystem: Converte todas as figurinhas repetidas em pó
+    TradeSystem -> Album: Confirmação de conversão
+    Album -> User: Atualiza saldo de pó e remove figurinhas repetidas
+    Album -> LogSystem: Registra log de conversão de todas as figurinhas em pó
+end
+@enduml
