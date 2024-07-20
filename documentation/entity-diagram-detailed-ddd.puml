@@ -1,0 +1,244 @@
+@startuml Diagrama de Entidade Detalhado com DDD para "Álbum de Figurinhas Online"
+!include <C4/C4_Container>
+'LAYOUT CONFIG
+left to right direction
+skinparam packageStyle rectangle
+'ENTITIES AND VALUE OBJECTS
+package "Álbum de Figurinhas Online" {
+    entity user {
+        +id: UUID
+        +displayName: String
+        +email: String
+        +dustBalance: Int
+        -- Methods --
+        +addDust(amount: Integer)
+        +subtractDust(amount: Integer)
+        +updateProfile(displayName: String, email: String)
+    }
+
+    entity album {
+        +id: UUID
+        +name: String
+        +userId: UUID
+        +collections: List<Collection>
+        +transactions: List<TransactionLog>
+        -- Methods --
+        +addCollection(collection: Collection)
+        +removeCollection(collection: Collection)
+        +logTransaction(transaction: TransactionLog)
+    }
+    
+    package "Agregado: Colecao" {
+        entity collection {
+            +id: UUID
+            +name: String
+            +stickers: List<Sticker>
+            +stickerPacks: List<StickerPack>
+            +published: Boolean
+            -- Methods --
+            +addSticker(sticker: Sticker)
+            +removeSticker(sticker: Sticker)
+            +addStickerPack(stickerPack: StickerPack)
+            +removeStickerPack(stickerPack: StickerPack)
+            +publish()
+            +deactivate()
+        }
+
+        entity sticker {
+            +id: UUID
+            +name: String
+            +rarity: Rarity
+            +description: String
+            +image: String
+            +collectionId: UUID
+            +published: Boolean
+            -- Methods --
+            +changeName(name: String)
+            +changeDescription(description: String)
+            +changeImage(image: String)
+            +publish()
+            +deactivate()
+        }
+    }
+
+    entity stickerPack {
+        +id: UUID
+        +name: String
+        +stickers: List<Sticker>
+        +collectionId: UUID
+        +dustCost: Integer
+        +dustMultiplier: Float
+        +published: Boolean
+        -- Methods --
+        +publishPack()
+        +deactivatePack()
+        +addCollectionStickers(collection: Collection)
+        +changeDustCost(cost: Integer)
+        +changeDustMultiplier(multiplier: Float)
+    }
+    
+    entity specialStickerPack {
+        +id: UUID
+        +name: String
+        +stickers: List<Sticker>
+        +rarity: Rarity
+        +dustCost: Integer
+        +dustMultiplier: Float
+        -- Methods --
+        +publishPack()
+        +deactivatePack()
+        +addSticker(sticker: Sticker)
+        +removeSticker(sticker: Sticker)
+        +changeDustCost(cost: Integer)
+        +changeDustMultiplier(multiplier: Float)
+    }
+    
+    entity dust {
+        +amount: Int
+    }
+    
+    entity transactionLog {
+        +id: UUID
+        +userId: UUID
+        +action: String
+        +timestamp: DateTime
+        +details: String
+        -- Methods --
+        +createLog(userId: UUID, action: String, details: String)
+    }
+    
+    enum Rarity {
+        Gold
+        Silver
+        Bronze
+    }
+}
+
+'DOMAIN SERVICES
+package "Serviços de Domínio" {
+    entity adminPanel {
+        +grantDust(userId: UUID, amount: Int)
+        +grantStickerPack(userId: UUID, packId: UUID)
+        +grantSticker(userId: UUID, stickerId: UUID)
+        +grantSpecialStickerPack(userId: UUID, packId: UUID)
+    }
+
+    entity tradeSystem {
+        +registerTransaction(log: TransactionLog)
+        +convertStickersToDust(userId: UUID, stickerIds: List<UUID>)
+        +buyStickerPackWithDust(userId: UUID, packId: UUID)
+        +buyStickerWithDust(userId: UUID, stickerId: UUID)
+        +openStickerPack(userId: UUID, packId: UUID)
+        +setDustMultipliers(packMultiplier: Float, stickerMultiplier: Float)
+    }
+    
+    entity collectionManagement {
+        +addCollection(collection: Collection)
+    }
+    
+    entity stickerManagement {
+        +addSticker(sticker: Sticker, collectionId: UUID)
+        +updateSticker(sticker: Sticker)
+    }
+    
+    entity stickerPackManagement {
+        +createStickerPack(pack: StickerPack)
+        +createSpecialStickerPack(pack: SpecialStickerPack)
+        +findStickerPackByCollection(collectionId: String)
+        +findStickerPackBySticker(stickerId: String)
+    }
+}
+
+'RELATIONSHIPS
+user --> album : possui
+user --> transactionLog : realiza
+album --> collection : contém
+album --> transactionLog : registra
+collection --> sticker : contém
+collection --> stickerPack : contém
+stickerPack --> sticker : contém
+specialStickerPack --> sticker : contém (escolhidas)
+sticker --> dust : transforma em (se repetida)
+dust --> tradeSystem : utilizado para comprar figurinhas/pacotes
+tradeSystem --> transactionLog : registra
+tradeSystem --> sticker : destrói/comprar
+collectionManagement --> collection : administra ciclo de vida
+stickerManagement --> sticker : administra ciclo de vida
+stickerPackManagement --> stickerPack : administra ciclo de vida
+stickerPackManagement --> specialStickerPack : administra ciclo de vida
+album --> dust : concede
+adminPanel --> dust : concede ao usuário
+
+'NOTES
+note left of user
+  A entidade `User` representa um usuário do sistema. 
+  Usuários têm um saldo de pó (`dustBalance`) que pode ser aumentado ou diminuído.
+  Métodos permitem atualizar o perfil e gerenciar o saldo de pó.
+end note
+
+note right of album
+  A entidade `Album` representa um álbum de figurinhas pertencente a um usuário.
+  Cada álbum contém coleções e logs de transações.
+  Métodos permitem adicionar e remover coleções, bem como registrar transações.
+end note
+
+note left of collection
+  A entidade `Collection` é um agregado que contém figurinhas (`Sticker`) e pacotes de figurinhas (`StickerPack`).
+  Uma coleção pode ser publicada ou desativada.
+  Métodos permitem adicionar e remover figurinhas e pacotes, além de publicar e desativar a coleção.
+end note
+
+note right of sticker
+  A entidade `Sticker` representa uma figurinha dentro de uma coleção.
+  Cada figurinha tem uma raridade, descrição e imagem, e pode ser publicada ou desativada.
+  Métodos permitem alterar os atributos da figurinha e gerenciar seu estado de publicação.
+end note
+
+note left of stickerPack
+  A entidade `StickerPack` representa um pacote de figurinhas.
+  Cada pacote pertence a uma coleção e contém figurinhas.
+  O custo em pó e o multiplicador de pó podem ser definidos.
+  Métodos permitem publicar, desativar, adicionar figurinhas da coleção e alterar custos e multiplicadores de pó.
+end note
+
+note right of specialStickerPack
+  A entidade `SpecialStickerPack` é semelhante a `StickerPack`, mas permite escolher figurinhas específicas e suas raridades.
+  Cada pacote especial também tem um custo em pó e um multiplicador de pó.
+  Métodos permitem publicar, desativar, adicionar/remover figurinhas e alterar custos e multiplicadores de pó.
+end note
+
+note left of dust
+  A entidade `Dust` representa a quantidade de pó que um usuário possui.
+  O pó é utilizado como moeda para comprar figurinhas e pacotes de figurinhas.
+end note
+
+note right of transactionLog
+  A entidade `TransactionLog` registra todas as transações realizadas no sistema.
+  Cada log contém detalhes da transação, como o usuário, ação, timestamp e detalhes adicionais.
+  Métodos permitem criar logs de transação.
+end note
+
+note right of adminPanel
+  O serviço de domínio `AdminPanel` permite que administradores concedam pó a usuários, além de pacotes e figurinhas.
+end note
+
+note left of tradeSystem
+  O serviço de domínio `TradeSystem` gerencia a troca de figurinhas por pó, a compra de pacotes e figurinhas com pó, e a abertura de pacotes.
+  Métodos permitem registrar transações, converter figurinhas repetidas em pó, comprar pacotes/figurinhas com pó e configurar multiplicadores de pó.
+end note
+
+note right of collectionManagement
+  O serviço de domínio `CollectionManagement` gerencia o ciclo de vida das coleções.
+  Métodos permitem adicionar e atualizar coleções.
+end note
+
+note left of stickerManagement
+  O serviço de domínio `StickerManagement` gerencia o ciclo de vida das figurinhas.
+  Métodos permitem adicionar e atualizar figurinhas em coleções.
+end note
+
+note right of stickerPackManagement
+  O serviço de domínio `StickerPackManagement` gerencia o ciclo de vida dos pacotes de figurinhas.
+  Métodos permitem criar pacotes de figurinhas e pacotes especiais, além de encontrar pacotes por coleção ou figurinha.
+end note
+@enduml

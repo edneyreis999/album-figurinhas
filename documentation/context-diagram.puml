@@ -47,4 +47,6 @@ album --> gcpServices : Utiliza para armazenamento e análise
 album --> paymentSystem : Processa compras de pacotes com cartão de crédito
 album --> pushNotificationSystem : Envia notificações push aos usuários
 album --> promotionSystem : Gerencia e aplica promoções
+album --> tradeSystem : Envia logs de abertura de pacotes
+album --> tradeSystem : Permite compra de pacotes especiais
 @enduml
