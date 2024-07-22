@@ -6,7 +6,7 @@ export class Uuid extends ValueObject {
 
   constructor(id?: string) {
     super();
-    this.id = id || uuidv4();
+    this.id = id ?? uuidv4();
     this.validate();
   }
 
@@ -24,7 +24,7 @@ export class Uuid extends ValueObject {
 
 export class InvalidUuidError extends Error {
   constructor(message?: string) {
-    super(message || 'ID must be a valida UUID');
+    super(message ?? 'ID must be a valid UUID');
     this.name = 'InvalidUuidError';
   }
 }
