@@ -1,7 +1,7 @@
 {
-  "name": "basic-nodejs-environment",
+  "name": "backend-album-de-figurinhas",
   "version": "1.0.0",
-  "description": "My minimalistic Node.js development environment seamlessly integrated with Docker and VSCode.",
+  "description": "Uma plataforma de backend robusta para gerenciar um álbum de figurinhas online.",
   "main": "index.js",
   "scripts": {
     "test": "jest",

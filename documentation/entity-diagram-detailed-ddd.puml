@@ -8,12 +8,11 @@ package "Álbum de Figurinhas Online" {
     entity user {
         +id: UUID
         +displayName: String
-        +email: String
         +dustBalance: Int
         -- Methods --
         +addDust(amount: Integer)
         +subtractDust(amount: Integer)
-        +updateProfile(displayName: String, email: String)
+        +updateProfile(displayName: String)
     }
 
     entity album {

@@ -1,8 +1,9 @@
-# You should create your own entities here.
+# You should create your own entities here
 
-### example.
+### example
 
 #### category.entity.ts
+
 ``` typescript
 export type CategoryConstructorProps = {
   category_id?: Uuid;
@@ -91,6 +92,7 @@ export class Category extends Entity {
 ### validators
 
 #### category.validator.ts
+
 ``` typescript
 export class CategoryRules {
     @MaxLength(255)
