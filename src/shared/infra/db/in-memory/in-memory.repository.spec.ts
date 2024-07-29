@@ -89,7 +89,7 @@ describe('InMemoryRepository Unit Tests', () => {
   it('should throws error on update when entity not found', async () => {
     const entity = new StubEntity({ name: 'name value', price: 5 });
     await expect(repo.update(entity)).rejects.toThrow(
-      new NotFoundError(entity.entityId, StubEntity),
+      new NotFoundError(entity.entityId.id, StubEntity),
     );
   });
 
