@@ -112,7 +112,15 @@ describe('User Unit Tests', () => {
       displayName: 'John Doe',
       dustBalance: 50,
     });
-    expect(() => user.subtractDust(60)).toThrow('Not enough dust');
+    expect(() => user.subtractDust(60)).toThrow(EntityValidationError);
+  });
+
+  test('should throw error when dust is more then 9999', () => {
+    const user = User.create({
+      displayName: 'John Doe',
+      dustBalance: 50,
+    });
+    expect(() => user.addDust(9999)).toThrow(EntityValidationError);
   });
 
   test('should throw error when subtracting more dust than available', () => {
@@ -120,7 +128,7 @@ describe('User Unit Tests', () => {
       displayName: 'John Doe',
       dustBalance: 50,
     });
-    expect(() => user.subtractDust(100)).toThrow('Not enough dust');
+    expect(() => user.subtractDust(100)).toThrow(EntityValidationError);
   });
 
   test('should activate a user', () => {
@@ -168,7 +176,7 @@ describe('User Validator', () => {
       expect(() => User.create({ displayName: null as any })).toThrow(EntityValidationError);
       expect(() => User.create({ displayName: '' })).toThrow(EntityValidationError);
       expect(() => User.create({ displayName: 5 as any })).toThrow(EntityValidationError);
-      expect(() => User.create({ displayName: 't'.repeat(256) })).toThrow(EntityValidationError);
+      expect(() => User.create({ displayName: 't'.repeat(31) })).toThrow(EntityValidationError);
     });
 
     test('should throw an error for invalid dustBalance', () => {

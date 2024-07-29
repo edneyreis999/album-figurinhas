@@ -55,10 +55,6 @@ export class User extends Entity {
   }
 
   subtractDust(amount: number): void {
-    const remainingDustBalance = this.dustBalance - amount;
-    if (remainingDustBalance < 0) {
-      throw new Error('Not enough dust');
-    }
     this.dustBalance -= amount;
     User.validate(this);
   }

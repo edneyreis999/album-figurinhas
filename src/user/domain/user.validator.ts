@@ -4,6 +4,7 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  Max,
   MaxLength,
   Min,
 } from 'class-validator';
@@ -12,13 +13,14 @@ import { User } from './user.entity';
 
 //criar um testes que verifique os decorators
 export class UserRules {
-  @MaxLength(255)
+  @MaxLength(30, { message: 'Display name must be less than 30 characters' })
   @IsString()
   @IsNotEmpty()
   displayName!: string;
 
   @IsNumber({ allowNaN: false, allowInfinity: false, maxDecimalPlaces: 4 })
-  @Min(0)
+  @Min(0, { message: 'Dust balance must be greater than 0' })
+  @Max(9999, { message: 'Dust balance must be less than 9999' })
   @IsOptional()
   dustBalance!: number | null;
 
