@@ -2,6 +2,7 @@ import { Entity } from '../../shared/domain/entity';
 import { EntityValidationError } from '../../shared/domain/validators/validation.error';
 import type { ValueObject } from '../../shared/domain/value-object';
 import { Uuid } from '../../shared/domain/value-objects/uuid.vo';
+import { UserFakeBuilder } from './user-fake.builder';
 import { UserValidatorFactory } from './user.validator';
 
 export type UserConstructorProps = {
@@ -74,6 +75,10 @@ export class User extends Entity {
       throw new EntityValidationError(validator.errors!);
     }
     console.log('User validated', entity);
+  }
+
+  static fake() {
+    return UserFakeBuilder;
   }
 
   toJSON() {
