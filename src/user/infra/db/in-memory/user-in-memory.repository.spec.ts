@@ -27,38 +27,38 @@ describe('UserInMemoryRepository', () => {
     expect(itemsFiltered).toStrictEqual([items[0], items[1]]);
   });
 
-  it('should sort by created_at when sort param is null', async () => {
-    const created_at = new Date();
+  it('should sort by createdAt when sort param is null', async () => {
+    const createdAt = new Date();
 
     const items = [
-      User.fake().aUser().withDisplayName('test').withCreatedAt(created_at).build(),
+      User.fake().aUser().withDisplayName('test').withCreatedAt(createdAt).build(),
       User.fake()
         .aUser()
         .withDisplayName('TEST')
-        .withCreatedAt(new Date(created_at.getTime() + 100))
+        .withCreatedAt(new Date(createdAt.getTime() + 100))
         .build(),
       User.fake()
         .aUser()
         .withDisplayName('fake')
-        .withCreatedAt(new Date(created_at.getTime() + 200))
+        .withCreatedAt(new Date(createdAt.getTime() + 200))
         .build(),
     ];
 
-    const itemsSorted = await repository['applySort'](items, null, null);
+    const itemsSorted = repository['applySort'](items, null, null);
     expect(itemsSorted).toStrictEqual([items[2], items[1], items[0]]);
   });
 
-  it('should sort by name', async () => {
+  it('should sort by displayName', async () => {
     const items = [
       User.fake().aUser().withDisplayName('c').build(),
       User.fake().aUser().withDisplayName('b').build(),
       User.fake().aUser().withDisplayName('a').build(),
     ];
 
-    let itemsSorted = await repository['applySort'](items, 'displayName', 'asc');
+    let itemsSorted = repository['applySort'](items, 'displayName', 'asc');
     expect(itemsSorted).toStrictEqual([items[2], items[1], items[0]]);
 
-    itemsSorted = await repository['applySort'](items, 'displayName', 'desc');
+    itemsSorted = repository['applySort'](items, 'displayName', 'desc');
     expect(itemsSorted).toStrictEqual([items[0], items[1], items[2]]);
   });
 });
