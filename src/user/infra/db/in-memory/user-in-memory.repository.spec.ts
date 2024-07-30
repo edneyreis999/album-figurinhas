@@ -1,4 +1,4 @@
-import { User } from '../../domain/user.entity';
+import { User } from '../../../domain/user.entity';
 import { UserInMemoryRepository } from './user-in-memory.repository';
 
 describe('UserInMemoryRepository', () => {
@@ -9,7 +9,7 @@ describe('UserInMemoryRepository', () => {
     const items = [User.fake().aUser().build()];
     const filterSpy = jest.spyOn(items, 'filter' as any);
 
-    const itemsFiltered = await repository['applyFilter'](items, null);
+    const itemsFiltered = await repository['applyFilter'](items, null as any);
     expect(filterSpy).not.toHaveBeenCalled();
     expect(itemsFiltered).toStrictEqual(items);
   });
