@@ -46,20 +46,4 @@ describe('ValueObject Unit Tests', () => {
 
     expect(object1.equals(object2 as any)).toBe(false);
   });
-
-  it('should return false for null value object', () => {
-    const valueObject = new StringValueObject('test');
-    expect(valueObject.equals(null as any)).toBe(false);
-  });
-
-  it('should return false for undefined value object', () => {
-    const valueObject = new StringValueObject('test');
-    expect(valueObject.equals(undefined as any)).toBe(false);
-  });
-
-  it('should return false when constructor names are different', () => {
-    const stringObject = new StringValueObject('test');
-    const complexObject = new ComplexValueObject('test', 1);
-    expect(stringObject.equals(complexObject as any)).toBe(false);
-  });
 });

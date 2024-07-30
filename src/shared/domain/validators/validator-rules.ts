@@ -39,13 +39,6 @@ export class ValidatorRules {
     }
     return this;
   }
-
-  positive(): Omit<this, 'positive'> {
-    if (!isEmpty(this.value) && (typeof this.value !== 'number' || this.value <= 0)) {
-      throw new ValidationError(`The ${this.property} must be a positive number`);
-    }
-    return this;
-  }
 }
 
 export function isEmpty(value: any) {
