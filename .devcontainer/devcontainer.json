@@ -50,9 +50,7 @@
 				"sonarlint.ls.javaHome": "/usr/local/openjdk-17"
 			}
 		}
-	},
-	"remoteUser": "node",
-	"postCreateCommand": "sudo chsh -s $(which zsh) node"
+	}
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
