@@ -25,7 +25,7 @@ describe('SubtractDustUserUseCase Integration Tests', () => {
   });
 
   it('should subtract dust to a user', async () => {
-    const entity = User.fake().aUser().withDisplayName('test').build();
+    const entity = User.fake().aUser().withDisplayName('test').withDustBalance(200000).build();
     repository.insert(entity);
 
     let output = await useCase.execute({
