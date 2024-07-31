@@ -29,7 +29,6 @@ describe('UserFakerBuilder Unit Tests', () => {
       expect(faker.userId).toBe(userId);
     });
 
-    //TODO - melhorar este nome
     test('should pass index to userId factory', () => {
       let mockFactory = jest.fn(() => new Uuid());
       faker.withUuid(mockFactory);
@@ -54,7 +53,7 @@ describe('UserFakerBuilder Unit Tests', () => {
       expect(typeof faker['_displayName']).toBe('function');
     });
 
-    test('should call the name method', () => {
+    test('should call the displayName method', () => {
       const chance = Chance();
       const spyWordMethod = jest.spyOn(chance, 'name');
       faker['chance'] = chance;

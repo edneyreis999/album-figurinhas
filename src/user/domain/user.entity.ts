@@ -8,7 +8,7 @@ import { UserValidatorFactory } from './user.validator';
 export type UserConstructorProps = {
   userId?: Uuid;
   displayName: string;
-  dustBalance?: number;
+  dustBalance?: number | null;
   isActive?: boolean;
   createdAt?: Date;
 };
@@ -45,8 +45,8 @@ export class User extends Entity {
     return user;
   }
 
-  changeDisplayName(name: string): void {
-    this.displayName = name;
+  changeDisplayName(displayName: string): void {
+    this.displayName = displayName;
     User.validate(this);
   }
 
@@ -84,7 +84,7 @@ export class User extends Entity {
   toJSON() {
     return {
       userId: this.userId.id,
-      name: this.displayName,
+      displayName: this.displayName,
       dustBalance: this.dustBalance,
       isActive: this.isActive,
       createdAt: this.createdAt,

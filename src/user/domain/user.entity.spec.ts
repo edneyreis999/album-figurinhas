@@ -162,7 +162,7 @@ describe('User Unit Tests', () => {
     });
     expect(user.toJSON()).toEqual({
       userId: user.userId.id,
-      name: 'John Doe',
+      displayName: 'John Doe',
       dustBalance: 0,
       isActive: true,
       createdAt: user.createdAt,
