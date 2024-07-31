@@ -2,6 +2,7 @@ import { Entity } from '../../shared/domain/entity';
 import { EntityValidationError } from '../../shared/domain/validators/validation.error';
 import type { ValueObject } from '../../shared/domain/value-object';
 import { Uuid } from '../../shared/domain/value-objects/uuid.vo';
+import { NegativeNumberNotAllowedError } from '../errors/negative-number-not-allowed-error';
 import { UserFakeBuilder } from './user-fake.builder';
 import { UserValidatorFactory } from './user.validator';
 
@@ -51,11 +52,17 @@ export class User extends Entity {
   }
 
   addDust(amount: number): void {
+    if (amount < 0) {
+      throw new NegativeNumberNotAllowedError(`Could not add dust with negative amount`);
+    }
     this.dustBalance += amount;
     User.validate(this);
   }
 
   subtractDust(amount: number): void {
+    if (amount < 0) {
+      throw new NegativeNumberNotAllowedError(`Could not subtract dust with negative amount`);
+    }
     this.dustBalance -= amount;
     User.validate(this);
   }
@@ -74,7 +81,6 @@ export class User extends Entity {
     if (!isValid) {
       throw new EntityValidationError(validator.errors!);
     }
-    console.log('User validated', entity);
   }
 
   static fake() {

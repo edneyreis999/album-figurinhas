@@ -23,7 +23,7 @@ export class UserFakeBuilder<TBuild = any> {
     return new UserFakeBuilder<User>();
   }
 
-  static theCategories(countObjs: number) {
+  static theUsers(countObjs: number) {
     return new UserFakeBuilder<User[]>(countObjs);
   }
 
@@ -70,7 +70,7 @@ export class UserFakeBuilder<TBuild = any> {
   }
 
   build(): TBuild {
-    const categories = new Array(this.countObjs).fill(undefined).map((_, index) => {
+    const users = new Array(this.countObjs).fill(undefined).map((_, index) => {
       const user = new User({
         userId: !this._userId ? undefined : this.callFactory(this._userId, index),
         displayName: this.callFactory(this._displayName, index),
@@ -80,10 +80,9 @@ export class UserFakeBuilder<TBuild = any> {
           createdAt: this.callFactory(this._createdAt, index),
         }),
       });
-      // user.validate();
       return user;
     });
-    return this.countObjs === 1 ? (categories[0] as any) : categories;
+    return this.countObjs === 1 ? (users[0] as any) : users;
   }
 
   get userId() {

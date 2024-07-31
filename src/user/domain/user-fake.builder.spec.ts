@@ -37,7 +37,7 @@ describe('UserFakerBuilder Unit Tests', () => {
 
       const userId = new Uuid();
       mockFactory = jest.fn(() => userId);
-      const fakerMany = UserFakeBuilder.theCategories(2);
+      const fakerMany = UserFakeBuilder.theUsers(2);
       fakerMany.withUuid(mockFactory);
       fakerMany.build();
 
@@ -79,12 +79,12 @@ describe('UserFakerBuilder Unit Tests', () => {
       const user = faker.build();
       expect(user.displayName).toBe(`test displayName 0`);
 
-      const fakerMany = UserFakeBuilder.theCategories(2);
+      const fakerMany = UserFakeBuilder.theUsers(2);
       fakerMany.withDisplayName(index => `test displayName ${index}`);
-      const categories = fakerMany.build();
+      const users = fakerMany.build();
 
-      expect(categories[0].displayName).toBe(`test displayName 0`);
-      expect(categories[1].displayName).toBe(`test displayName 1`);
+      expect(users[0].displayName).toBe(`test displayName 0`);
+      expect(users[1].displayName).toBe(`test displayName 1`);
     });
 
     test('invalid too long case', () => {
@@ -130,12 +130,12 @@ describe('UserFakerBuilder Unit Tests', () => {
       const user = faker.build();
       expect(user.dustBalance).toBe(0);
 
-      const fakerMany = UserFakeBuilder.theCategories(2);
+      const fakerMany = UserFakeBuilder.theUsers(2);
       fakerMany.withDustBalance(index => index);
-      const categories = fakerMany.build();
+      const users = fakerMany.build();
 
-      expect(categories[0].dustBalance).toBe(0);
-      expect(categories[1].dustBalance).toBe(1);
+      expect(users[0].dustBalance).toBe(0);
+      expect(users[1].dustBalance).toBe(1);
     });
   });
 
@@ -192,12 +192,12 @@ describe('UserFakerBuilder Unit Tests', () => {
       const user = faker.build();
       expect(user.createdAt.getTime()).toBe(date.getTime() + 2);
 
-      const fakerMany = UserFakeBuilder.theCategories(2);
+      const fakerMany = UserFakeBuilder.theUsers(2);
       fakerMany.withCreatedAt(index => new Date(date.getTime() + index + 2));
-      const categories = fakerMany.build();
+      const users = fakerMany.build();
 
-      expect(categories[0].createdAt.getTime()).toBe(date.getTime() + 2);
-      expect(categories[1].createdAt.getTime()).toBe(date.getTime() + 3);
+      expect(users[0].createdAt.getTime()).toBe(date.getTime() + 2);
+      expect(users[1].createdAt.getTime()).toBe(date.getTime() + 3);
     });
   });
 
@@ -228,11 +228,11 @@ describe('UserFakerBuilder Unit Tests', () => {
     expect(user.createdAt).toBe(createdAt);
   });
 
-  test('should create many categories', () => {
-    const faker = UserFakeBuilder.theCategories(2);
-    let categories = faker.build();
+  test('should create many users', () => {
+    const faker = UserFakeBuilder.theUsers(2);
+    let users = faker.build();
 
-    categories.forEach(user => {
+    users.forEach(user => {
       expect(user.userId).toBeInstanceOf(Uuid);
       expect(typeof user.displayName === 'string').toBeTruthy();
       expect(typeof user.dustBalance === 'number').toBeTruthy();
@@ -242,7 +242,7 @@ describe('UserFakerBuilder Unit Tests', () => {
 
     const createdAt = new Date();
     const userId = new Uuid();
-    categories = faker
+    users = faker
       .withUuid(userId)
       .withDisplayName('displayName test')
       .withDustBalance(2000)
@@ -250,7 +250,7 @@ describe('UserFakerBuilder Unit Tests', () => {
       .withCreatedAt(createdAt)
       .build();
 
-    categories.forEach(user => {
+    users.forEach(user => {
       expect(user.userId.id).toBe(userId.id);
       expect(user.displayName).toBe('displayName test');
       expect(user.dustBalance).toBe(2000);

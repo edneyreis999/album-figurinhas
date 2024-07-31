@@ -8,7 +8,7 @@ export type UserModelProps = {
   createdAt: Date;
 };
 
-@Table({ tableName: 'categories', timestamps: false })
+@Table({ tableName: 'users', timestamps: false })
 export class UserModel extends Model<UserModelProps> {
   @PrimaryKey
   @Column({ type: DataType.UUID })

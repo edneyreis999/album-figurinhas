@@ -20,7 +20,7 @@ export class UserRules {
 
   @IsNumber({ allowNaN: false, allowInfinity: false, maxDecimalPlaces: 4 })
   @Min(0, { message: 'Dust balance must be greater than 0' })
-  @Max(9999, { message: 'Dust balance must be less than 9999' })
+  @Max(999999, { message: 'Dust balance must be less than 999999' })
   @IsOptional()
   dustBalance!: number | null;
 

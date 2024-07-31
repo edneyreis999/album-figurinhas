@@ -32,7 +32,7 @@ describe('UserSequelizeRepository Integration Test', () => {
     expect(entity.toJSON()).toStrictEqual(entityFound!.toJSON());
   });
 
-  it('should return all categories', async () => {
+  it('should return all users', async () => {
     const entity = User.fake().aUser().build();
     await repository.insert(entity);
     const entities = await repository.findAll();
@@ -74,13 +74,13 @@ describe('UserSequelizeRepository Integration Test', () => {
   describe('search method tests', () => {
     it('should only apply paginate when other params are null', async () => {
       const createdAt = new Date();
-      const categories = User.fake()
-        .theCategories(16)
+      const users = User.fake()
+        .theUsers(16)
         .withDisplayName('Movie')
         .withDustBalance(null)
         .withCreatedAt(createdAt)
         .build();
-      await repository.bulkInsert(categories);
+      await repository.bulkInsert(users);
       const spyToEntity = jest.spyOn(UserModelMapper, 'toEntity');
 
       const searchOutput = await repository.search(new UserSearchParams());
@@ -109,8 +109,8 @@ describe('UserSequelizeRepository Integration Test', () => {
 
     it('should order by createdAt DESC when search params are null', async () => {
       const createdAt = new Date();
-      const categories = User.fake()
-        .theCategories(16)
+      const users = User.fake()
+        .theUsers(16)
         .withDisplayName(index => `Movie ${index}`)
         .withDustBalance(null)
         .withCreatedAt(index => new Date(createdAt.getTime() + index))
@@ -118,12 +118,12 @@ describe('UserSequelizeRepository Integration Test', () => {
       const searchOutput = await repository.search(new UserSearchParams());
       const items = searchOutput.items;
       [...items].reverse().forEach((item, index) => {
-        expect(`Movie ${index}`).toBe(`${categories[index + 1].displayName}`);
+        expect(`Movie ${index}`).toBe(`${users[index + 1].displayName}`);
       });
     });
 
     it('should apply paginate and filter', async () => {
-      const categories = [
+      const users = [
         User.fake()
           .aUser()
           .withDisplayName('test')
@@ -146,7 +146,7 @@ describe('UserSequelizeRepository Integration Test', () => {
           .build(),
       ];
 
-      await repository.bulkInsert(categories);
+      await repository.bulkInsert(users);
 
       let searchOutput = await repository.search(
         new UserSearchParams({
@@ -157,7 +157,7 @@ describe('UserSequelizeRepository Integration Test', () => {
       );
       expect(searchOutput.toJSON(true)).toMatchObject(
         new UserSearchResult({
-          items: [categories[0], categories[2]],
+          items: [users[0], users[2]],
           total: 3,
           current_page: 1,
           per_page: 2,
@@ -173,7 +173,7 @@ describe('UserSequelizeRepository Integration Test', () => {
       );
       expect(searchOutput.toJSON(true)).toMatchObject(
         new UserSearchResult({
-          items: [categories[3]],
+          items: [users[3]],
           total: 3,
           current_page: 2,
           per_page: 2,
@@ -184,14 +184,14 @@ describe('UserSequelizeRepository Integration Test', () => {
     it('should apply paginate and sort', async () => {
       expect(repository.sortableFields).toStrictEqual(['displayName', 'createdAt']);
 
-      const categories = [
+      const users = [
         User.fake().aUser().withDisplayName('b').build(),
         User.fake().aUser().withDisplayName('a').build(),
         User.fake().aUser().withDisplayName('d').build(),
         User.fake().aUser().withDisplayName('e').build(),
         User.fake().aUser().withDisplayName('c').build(),
       ];
-      await repository.bulkInsert(categories);
+      await repository.bulkInsert(users);
 
       const arrange = [
         {
@@ -201,7 +201,7 @@ describe('UserSequelizeRepository Integration Test', () => {
             sort: 'displayName',
           }),
           result: new UserSearchResult({
-            items: [categories[1], categories[0]],
+            items: [users[1], users[0]],
             total: 5,
             current_page: 1,
             per_page: 2,
@@ -214,7 +214,7 @@ describe('UserSequelizeRepository Integration Test', () => {
             sort: 'displayName',
           }),
           result: new UserSearchResult({
-            items: [categories[4], categories[2]],
+            items: [users[4], users[2]],
             total: 5,
             current_page: 2,
             per_page: 2,
@@ -228,7 +228,7 @@ describe('UserSequelizeRepository Integration Test', () => {
             sort_dir: 'desc',
           }),
           result: new UserSearchResult({
-            items: [categories[3], categories[2]],
+            items: [users[3], users[2]],
             total: 5,
             current_page: 1,
             per_page: 2,
@@ -242,7 +242,7 @@ describe('UserSequelizeRepository Integration Test', () => {
             sort_dir: 'desc',
           }),
           result: new UserSearchResult({
-            items: [categories[4], categories[0]],
+            items: [users[4], users[0]],
             total: 5,
             current_page: 2,
             per_page: 2,
@@ -257,7 +257,7 @@ describe('UserSequelizeRepository Integration Test', () => {
     });
 
     describe('should search using filter, sort and paginate', () => {
-      const categories = [
+      const users = [
         User.fake().aUser().withDisplayName('test').build(),
         User.fake().aUser().withDisplayName('a').build(),
         User.fake().aUser().withDisplayName('TEST').build(),
@@ -274,7 +274,7 @@ describe('UserSequelizeRepository Integration Test', () => {
             filter: 'TEST',
           }),
           search_result: new UserSearchResult({
-            items: [categories[2], categories[4]],
+            items: [users[2], users[4]],
             total: 3,
             current_page: 1,
             per_page: 2,
@@ -288,7 +288,7 @@ describe('UserSequelizeRepository Integration Test', () => {
             filter: 'TEST',
           }),
           search_result: new UserSearchResult({
-            items: [categories[0]],
+            items: [users[0]],
             total: 3,
             current_page: 2,
             per_page: 2,
@@ -297,7 +297,7 @@ describe('UserSequelizeRepository Integration Test', () => {
       ];
 
       beforeEach(async () => {
-        await repository.bulkInsert(categories);
+        await repository.bulkInsert(users);
       });
 
       test.each(arrange)(

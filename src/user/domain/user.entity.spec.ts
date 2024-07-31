@@ -115,12 +115,12 @@ describe('User Unit Tests', () => {
     expect(() => user.subtractDust(60)).toThrow(EntityValidationError);
   });
 
-  test('should throw error when dust is more then 9999', () => {
+  test('should throw error when dust is more then 999999', () => {
     const user = User.create({
       displayName: 'John Doe',
       dustBalance: 50,
     });
-    expect(() => user.addDust(9999)).toThrow(EntityValidationError);
+    expect(() => user.addDust(999999)).toThrow(EntityValidationError);
   });
 
   test('should throw error when subtracting more dust than available', () => {
