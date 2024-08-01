@@ -2,7 +2,7 @@ import { NotFoundError } from '../../../../shared/domain/errors/not-found.error'
 import { InvalidUuidError, Uuid } from '../../../../shared/domain/value-objects/uuid.vo';
 import { User } from '../../../domain/user.entity';
 import { UserInMemoryRepository } from '../../../infra/db/in-memory/user-in-memory.repository';
-import { SubtractDustUserUseCase } from './subtract-dust-user.use-case';
+import { SubtractDustUserUseCase } from './dust-subtract-user.use-case';
 
 describe('SubtractDustUserUseCase Unit Tests', () => {
   let useCase: SubtractDustUserUseCase;

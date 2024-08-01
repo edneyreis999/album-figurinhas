@@ -4,7 +4,7 @@ import { setupSequelize } from '../../../../shared/infra/testing/helpers';
 import { User } from '../../../domain/user.entity';
 import { UserSequelizeRepository } from '../../../infra/db/sequelize/sequelize/user-sequelize.repository';
 import { UserModel } from '../../../infra/db/sequelize/sequelize/user.model';
-import { AddDustUserUseCase } from './add-dust-user.use-case';
+import { AddDustUserUseCase } from './dust-add-user.use-case';
 
 describe('AddDustUserUseCase Integration Tests', () => {
   let useCase: AddDustUserUseCase;
