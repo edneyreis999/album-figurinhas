@@ -4,6 +4,7 @@ import { Uuid } from '../../../../shared/domain/value-objects/uuid.vo';
 import { User } from '../../../domain/user.entity';
 import { IUserRepository } from '../../../domain/user.repository';
 import { UserOutputMapper, type UserOutput } from '../_user-shared/user-output';
+import type { SubtractDustUserInput } from './dust-subtract-user.input';
 
 export class SubtractDustUserUseCase
   implements IUseCase<SubtractDustUserInput, SubtractDustUserOutput>
@@ -25,10 +26,5 @@ export class SubtractDustUserUseCase
     return UserOutputMapper.toOutput(user);
   }
 }
-
-export type SubtractDustUserInput = {
-  id: string;
-  dust: number;
-};
 
 export type SubtractDustUserOutput = UserOutput;

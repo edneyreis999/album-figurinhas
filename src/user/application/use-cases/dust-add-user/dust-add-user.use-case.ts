@@ -4,6 +4,7 @@ import { Uuid } from '../../../../shared/domain/value-objects/uuid.vo';
 import { User } from '../../../domain/user.entity';
 import { IUserRepository } from '../../../domain/user.repository';
 import { UserOutputMapper, type UserOutput } from '../_user-shared/user-output';
+import type { AddDustUserInput } from './dust-add-user.input';
 
 export class AddDustUserUseCase implements IUseCase<AddDustUserInput, AddDustUserOutput> {
   constructor(private userRepo: IUserRepository) {}
@@ -16,19 +17,12 @@ export class AddDustUserUseCase implements IUseCase<AddDustUserInput, AddDustUse
       throw new NotFoundError(input.id, User);
     }
 
-    console.log('user after', user);
     user.addDust(input.dust);
-    console.log('user before', user);
 
     await this.userRepo.update(user);
 
     return UserOutputMapper.toOutput(user);
   }
 }
-
-export type AddDustUserInput = {
-  id: string;
-  dust: number;
-};
 
 export type AddDustUserOutput = UserOutput;
