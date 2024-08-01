@@ -1,5 +1,5 @@
-import { UserInMemoryRepository } from '../../../../infra/db/in-memory/user-in-memory.repository';
-import { CreateUserUseCase } from '../../create-user.use-case';
+import { UserInMemoryRepository } from '../../../infra/db/in-memory/user-in-memory.repository';
+import { CreateUserUseCase } from './create-user.use-case';
 
 describe('CreateUserUseCase Unit Tests', () => {
   let useCase: CreateUserUseCase;

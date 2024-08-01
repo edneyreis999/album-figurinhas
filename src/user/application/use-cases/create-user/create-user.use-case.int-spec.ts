@@ -1,8 +1,8 @@
-import { Uuid } from '../../../../../shared/domain/value-objects/uuid.vo';
-import { setupSequelize } from '../../../../../shared/infra/testing/helpers';
-import { UserSequelizeRepository } from '../../../../infra/db/sequelize/sequelize/user-sequelize.repository';
-import { UserModel } from '../../../../infra/db/sequelize/sequelize/user.model';
-import { CreateUserUseCase } from '../../create-user.use-case';
+import { Uuid } from '../../../../shared/domain/value-objects/uuid.vo';
+import { setupSequelize } from '../../../../shared/infra/testing/helpers';
+import { UserSequelizeRepository } from '../../../infra/db/sequelize/sequelize/user-sequelize.repository';
+import { UserModel } from '../../../infra/db/sequelize/sequelize/user.model';
+import { CreateUserUseCase } from './create-user.use-case';
 
 describe('CreateUserUseCase Integration Tests', () => {
   let useCase: CreateUserUseCase;

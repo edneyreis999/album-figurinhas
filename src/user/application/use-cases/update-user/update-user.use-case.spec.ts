@@ -1,8 +1,8 @@
-import { NotFoundError } from '../../../../../shared/domain/errors/not-found.error';
-import { InvalidUuidError, Uuid } from '../../../../../shared/domain/value-objects/uuid.vo';
-import { User } from '../../../../domain/user.entity';
-import { UserInMemoryRepository } from '../../../../infra/db/in-memory/user-in-memory.repository';
-import { UpdateUserUseCase } from '../../update-user.use-case';
+import { NotFoundError } from '../../../../shared/domain/errors/not-found.error';
+import { InvalidUuidError, Uuid } from '../../../../shared/domain/value-objects/uuid.vo';
+import { User } from '../../../domain/user.entity';
+import { UserInMemoryRepository } from '../../../infra/db/in-memory/user-in-memory.repository';
+import { UpdateUserUseCase } from './update-user.use-case';
 
 describe('UpdateUserUseCase Unit Tests', () => {
   let useCase: UpdateUserUseCase;

@@ -1,16 +1,16 @@
 import {
   PaginationOutput,
   PaginationOutputMapper,
-} from '../../../shared/application/pagination-output';
-import { IUseCase } from '../../../shared/application/use-case.interface';
-import { SortDirection } from '../../../shared/domain/repository/search-params';
+} from '../../../../shared/application/pagination-output';
+import { IUseCase } from '../../../../shared/application/use-case.interface';
+import { SortDirection } from '../../../../shared/domain/repository/search-params';
 import {
   IUserRepository,
   UserFilter,
   UserSearchParams,
   UserSearchResult,
-} from '../../domain/user.repository';
-import { UserOutputMapper, type UserOutput } from './shared/user-output';
+} from '../../../domain/user.repository';
+import { UserOutputMapper, type UserOutput } from '../_user-shared/user-output';
 
 export class ListUsersUseCase implements IUseCase<ListUsersInput, ListUsersOutput> {
   constructor(private userRepo: IUserRepository) {}

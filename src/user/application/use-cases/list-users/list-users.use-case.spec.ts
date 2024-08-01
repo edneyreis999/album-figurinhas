@@ -1,8 +1,8 @@
-import { User } from '../../../../domain/user.entity';
-import { UserSearchResult } from '../../../../domain/user.repository';
-import { UserInMemoryRepository } from '../../../../infra/db/in-memory/user-in-memory.repository';
-import { ListUsersUseCase } from '../../list-users.use-case';
-import { UserOutputMapper } from '../../shared/user-output';
+import { User } from '../../../domain/user.entity';
+import { UserSearchResult } from '../../../domain/user.repository';
+import { UserInMemoryRepository } from '../../../infra/db/in-memory/user-in-memory.repository';
+import { UserOutputMapper } from '../_user-shared/user-output';
+import { ListUsersUseCase } from './list-users.use-case';
 
 describe('ListUsersUseCase Unit Tests', () => {
   let listUsersUseCase: ListUsersUseCase;

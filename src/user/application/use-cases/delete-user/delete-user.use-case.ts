@@ -1,6 +1,6 @@
-import { IUseCase } from '../../../shared/application/use-case.interface';
-import { Uuid } from '../../../shared/domain/value-objects/uuid.vo';
-import { IUserRepository } from '../../domain/user.repository';
+import { IUseCase } from '../../../../shared/application/use-case.interface';
+import { Uuid } from '../../../../shared/domain/value-objects/uuid.vo';
+import { IUserRepository } from '../../../domain/user.repository';
 
 export class DeleteUserUseCase implements IUseCase<DeleteUserInput, void> {
   constructor(private userRepo: IUserRepository) {}

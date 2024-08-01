@@ -1,10 +1,10 @@
-import { NotFoundError } from '../../../../../shared/domain/errors/not-found.error';
-import { Uuid } from '../../../../../shared/domain/value-objects/uuid.vo';
-import { setupSequelize } from '../../../../../shared/infra/testing/helpers';
-import { User } from '../../../../domain/user.entity';
-import { UserSequelizeRepository } from '../../../../infra/db/sequelize/sequelize/user-sequelize.repository';
-import { UserModel } from '../../../../infra/db/sequelize/sequelize/user.model';
-import { GetUserUseCase } from '../../get-user.use-case';
+import { NotFoundError } from '../../../../shared/domain/errors/not-found.error';
+import { Uuid } from '../../../../shared/domain/value-objects/uuid.vo';
+import { setupSequelize } from '../../../../shared/infra/testing/helpers';
+import { User } from '../../../domain/user.entity';
+import { UserSequelizeRepository } from '../../../infra/db/sequelize/sequelize/user-sequelize.repository';
+import { UserModel } from '../../../infra/db/sequelize/sequelize/user.model';
+import { GetUserUseCase } from './get-user.use-case';
 describe('GetUserUseCase Integration Tests', () => {
   let useCase: GetUserUseCase;
   let repository: UserSequelizeRepository;

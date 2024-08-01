@@ -1,10 +1,10 @@
-import { NotFoundError } from '../../../../../shared/domain/errors/not-found.error';
-import { Uuid } from '../../../../../shared/domain/value-objects/uuid.vo';
-import { setupSequelize } from '../../../../../shared/infra/testing/helpers';
-import { User } from '../../../../domain/user.entity';
-import { UserSequelizeRepository } from '../../../../infra/db/sequelize/sequelize/user-sequelize.repository';
-import { UserModel } from '../../../../infra/db/sequelize/sequelize/user.model';
-import { UpdateUserUseCase } from '../../update-user.use-case';
+import { NotFoundError } from '../../../../shared/domain/errors/not-found.error';
+import { Uuid } from '../../../../shared/domain/value-objects/uuid.vo';
+import { setupSequelize } from '../../../../shared/infra/testing/helpers';
+import { User } from '../../../domain/user.entity';
+import { UserSequelizeRepository } from '../../../infra/db/sequelize/sequelize/user-sequelize.repository';
+import { UserModel } from '../../../infra/db/sequelize/sequelize/user.model';
+import { UpdateUserUseCase } from './update-user.use-case';
 
 describe('UpdateUserUseCase Integration Tests', () => {
   let useCase: UpdateUserUseCase;

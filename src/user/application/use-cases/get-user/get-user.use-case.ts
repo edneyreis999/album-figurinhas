@@ -1,9 +1,9 @@
-import { IUseCase } from '../../../shared/application/use-case.interface';
-import { NotFoundError } from '../../../shared/domain/errors/not-found.error';
-import { Uuid } from '../../../shared/domain/value-objects/uuid.vo';
-import { User } from '../../domain/user.entity';
-import { IUserRepository } from '../../domain/user.repository';
-import { UserOutputMapper, type UserOutput } from './shared/user-output';
+import { IUseCase } from '../../../../shared/application/use-case.interface';
+import { NotFoundError } from '../../../../shared/domain/errors/not-found.error';
+import { Uuid } from '../../../../shared/domain/value-objects/uuid.vo';
+import { User } from '../../../domain/user.entity';
+import { IUserRepository } from '../../../domain/user.repository';
+import { UserOutputMapper, type UserOutput } from '../_user-shared/user-output';
 
 export class GetUserUseCase implements IUseCase<GetUserInput, GetUserOutput> {
   constructor(private userRepo: IUserRepository) {}

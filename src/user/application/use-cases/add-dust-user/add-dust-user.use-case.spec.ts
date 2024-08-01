@@ -1,8 +1,8 @@
-import { NotFoundError } from '../../../../../shared/domain/errors/not-found.error';
-import { InvalidUuidError, Uuid } from '../../../../../shared/domain/value-objects/uuid.vo';
-import { User } from '../../../../domain/user.entity';
-import { UserInMemoryRepository } from '../../../../infra/db/in-memory/user-in-memory.repository';
-import { AddDustUserUseCase } from '../../add-dust-user.use-case';
+import { NotFoundError } from '../../../../shared/domain/errors/not-found.error';
+import { InvalidUuidError, Uuid } from '../../../../shared/domain/value-objects/uuid.vo';
+import { User } from '../../../domain/user.entity';
+import { UserInMemoryRepository } from '../../../infra/db/in-memory/user-in-memory.repository';
+import { AddDustUserUseCase } from './add-dust-user.use-case';
 
 describe('AddDustUserUseCase Unit Tests', () => {
   let useCase: AddDustUserUseCase;

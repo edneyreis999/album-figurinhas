@@ -1,7 +1,7 @@
-import { IUseCase } from '../../../shared/application/use-case.interface';
-import { User } from '../../domain/user.entity';
-import { IUserRepository } from '../../domain/user.repository';
-import { UserOutputMapper, type UserOutput } from './shared/user-output';
+import { IUseCase } from '../../../../shared/application/use-case.interface';
+import { User } from '../../../domain/user.entity';
+import { IUserRepository } from '../../../domain/user.repository';
+import { UserOutputMapper, type UserOutput } from '../_user-shared/user-output';
 
 export class CreateUserUseCase implements IUseCase<CreateUserInput, CreateUserOutput> {
   constructor(private readonly userRepo: IUserRepository) {}

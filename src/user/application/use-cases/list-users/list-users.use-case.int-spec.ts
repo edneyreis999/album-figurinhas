@@ -1,9 +1,9 @@
-import { setupSequelize } from '../../../../../shared/infra/testing/helpers';
-import { User } from '../../../../domain/user.entity';
-import { UserSequelizeRepository } from '../../../../infra/db/sequelize/sequelize/user-sequelize.repository';
-import { UserModel } from '../../../../infra/db/sequelize/sequelize/user.model';
-import { ListUsersUseCase } from '../../list-users.use-case';
-import { UserOutputMapper } from '../../shared/user-output';
+import { setupSequelize } from '../../../../shared/infra/testing/helpers';
+import { User } from '../../../domain/user.entity';
+import { UserSequelizeRepository } from '../../../infra/db/sequelize/sequelize/user-sequelize.repository';
+import { UserModel } from '../../../infra/db/sequelize/sequelize/user.model';
+import { UserOutputMapper } from '../_user-shared/user-output';
+import { ListUsersUseCase } from './list-users.use-case';
 
 describe('ListUsersUseCase Integration Tests', () => {
   let useCase: ListUsersUseCase;
