@@ -2,6 +2,7 @@ import { IUseCase } from '../../../../shared/application/use-case.interface';
 import { User } from '../../../domain/user.entity';
 import { IUserRepository } from '../../../domain/user.repository';
 import { UserOutputMapper, type UserOutput } from '../_user-shared/user-output';
+import type { CreateUserInput } from './create-user.input';
 
 export class CreateUserUseCase implements IUseCase<CreateUserInput, CreateUserOutput> {
   constructor(private readonly userRepo: IUserRepository) {}
@@ -14,11 +15,5 @@ export class CreateUserUseCase implements IUseCase<CreateUserInput, CreateUserOu
     return UserOutputMapper.toOutput(entity);
   }
 }
-
-export type CreateUserInput = {
-  displayName: string;
-  dustBalance?: number;
-  isActive?: boolean;
-};
 
 export type CreateUserOutput = UserOutput;
