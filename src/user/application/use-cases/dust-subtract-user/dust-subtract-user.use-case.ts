@@ -1,10 +1,14 @@
 import { IUseCase } from '../../../../shared/application/use-case.interface';
 import { NotFoundError } from '../../../../shared/domain/errors/not-found.error';
+import { EntityValidationError } from '../../../../shared/domain/validators/validation.error';
 import { Uuid } from '../../../../shared/domain/value-objects/uuid.vo';
 import { User } from '../../../domain/user.entity';
 import { IUserRepository } from '../../../domain/user.repository';
 import { UserOutputMapper, type UserOutput } from '../_user-shared/user-output';
-import type { SubtractDustUserInput } from './dust-subtract-user.input';
+import {
+  ValidateSubtractDustUserInput,
+  type SubtractDustUserInput,
+} from './dust-subtract-user.input';
 
 export class SubtractDustUserUseCase
   implements IUseCase<SubtractDustUserInput, SubtractDustUserOutput>
@@ -12,6 +16,11 @@ export class SubtractDustUserUseCase
   constructor(private userRepo: IUserRepository) {}
 
   async execute(input: SubtractDustUserInput): Promise<SubtractDustUserOutput> {
+    const errors = ValidateSubtractDustUserInput.validate(input);
+    if (errors.length > 0) {
+      throw errors;
+    }
+
     const uuid = new Uuid(input.id);
     const user = await this.userRepo.findById(uuid);
 
@@ -20,6 +29,10 @@ export class SubtractDustUserUseCase
     }
 
     user.subtractDust(input.dust);
+
+    if (user.notification.hasErrors()) {
+      throw new EntityValidationError(user.notification.toJSON());
+    }
 
     await this.userRepo.update(user);
 

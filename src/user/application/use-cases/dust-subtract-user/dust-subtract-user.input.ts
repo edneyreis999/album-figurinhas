@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsString, Min, validateSync } from 'class-validator';
+import { IsNumber, IsUUID, Min, validateSync } from 'class-validator';
 
 export type SubtractDustUserInputConstructorProps = {
   id: string;
@@ -6,12 +6,10 @@ export type SubtractDustUserInputConstructorProps = {
 };
 
 export class SubtractDustUserInput {
-  @IsString()
-  @IsNotEmpty()
+  @IsUUID()
   id!: string;
 
   @IsNumber()
-  @IsNotEmpty()
   @Min(0)
   dust!: number;
 
@@ -23,7 +21,9 @@ export class SubtractDustUserInput {
 }
 
 export class ValidateSubtractDustUserInput {
-  static validate(input: SubtractDustUserInput) {
-    return validateSync(input);
+  static validate(input: SubtractDustUserInputConstructorProps) {
+    const addDustUserInput = new SubtractDustUserInput(input);
+    const errors = validateSync(addDustUserInput);
+    return errors;
   }
 }

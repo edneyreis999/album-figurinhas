@@ -1,4 +1,6 @@
+import type { ValidationError } from 'class-validator';
 import { NotFoundError } from '../../../../shared/domain/errors/not-found.error';
+import { EntityValidationError } from '../../../../shared/domain/validators/validation.error';
 import { InvalidUuidError, Uuid } from '../../../../shared/domain/value-objects/uuid.vo';
 import { User } from '../../../domain/user.entity';
 import { UserInMemoryRepository } from '../../../infra/db/in-memory/user-in-memory.repository';
@@ -109,5 +111,93 @@ describe('SubtractDustUserUseCase Unit Tests', () => {
         createdAt: entity.createdAt,
       });
     }
+  });
+
+  it(`should't subtract dust to a user when dust balance is less then 0`, async () => {
+    const entity = User.fake().aUser().withDisplayName('test').withDustBalance(500).build();
+    repository.items = [entity];
+    await useCase
+      .execute({ id: entity.userId.id, dust: 600 })
+      .catch((error: EntityValidationError) => {
+        expect(error).toBeInstanceOf(EntityValidationError);
+        expect(error.error).toEqual([{ dustBalance: ['Dust balance must be greater than 0'] }]);
+      });
+  });
+
+  it(`should throw validation error when dust is less then 0`, async () => {
+    const entity = User.fake().aUser().withDisplayName('test').withDustBalance(500).build();
+    await repository.insert(entity);
+    await useCase
+      .execute({ id: entity.userId.id, dust: -10 })
+      .catch((errors: ValidationError[]) => {
+        expect(errors).toBeInstanceOf(Array);
+        expect(errors).toHaveLength(1);
+        expect(errors[0].constraints).toEqual({
+          min: 'dust must not be less than 0',
+        });
+      });
+  });
+
+  it(`should throw validation error when dust is not a number`, async () => {
+    await useCase
+      .execute({ id: new Uuid().id, dust: 'invalid-number' as any })
+      .catch((errors: ValidationError[]) => {
+        expect(errors).toBeInstanceOf(Array);
+        expect(errors).toHaveLength(1);
+        expect(errors[0].constraints).toEqual({
+          isNumber: 'dust must be a number conforming to the specified constraints',
+          min: 'dust must not be less than 0',
+        });
+      });
+  });
+
+  it('should throw validation error when id is null or undefined', async () => {
+    await useCase.execute({ id: null as any, dust: 500 }).catch((errors: ValidationError[]) => {
+      expect(errors).toBeInstanceOf(Array);
+      expect(errors).toHaveLength(1);
+      expect(errors[0].constraints).toEqual({
+        isUuid: 'id must be a UUID',
+      });
+    });
+
+    await useCase
+      .execute({ id: undefined as any, dust: 500 })
+      .catch((errors: ValidationError[]) => {
+        expect(errors).toBeInstanceOf(Array);
+        expect(errors).toHaveLength(1);
+        expect(errors[0].constraints).toEqual({
+          isUuid: 'id must be a UUID',
+        });
+      });
+  });
+
+  it(`should throw validation error when id is not a valid uuid`, async () => {
+    await useCase.execute({ id: 'invalid-uuid', dust: 500 }).catch((errors: ValidationError[]) => {
+      expect(errors).toBeInstanceOf(Array);
+      expect(errors).toHaveLength(1);
+      expect(errors[0].constraints).toEqual({
+        isUuid: 'id must be a UUID',
+      });
+    });
+  });
+
+  it('should thorw validation error when id is null or undefined', async () => {
+    await useCase.execute({ id: null as any, dust: 500 }).catch((errors: ValidationError[]) => {
+      expect(errors).toBeInstanceOf(Array);
+      expect(errors).toHaveLength(1);
+      expect(errors[0].constraints).toEqual({
+        isUuid: 'id must be a UUID',
+      });
+    });
+
+    await useCase
+      .execute({ id: undefined as any, dust: 500 })
+      .catch((errors: ValidationError[]) => {
+        expect(errors).toBeInstanceOf(Array);
+        expect(errors).toHaveLength(1);
+        expect(errors[0].constraints).toEqual({
+          isUuid: 'id must be a UUID',
+        });
+      });
   });
 });

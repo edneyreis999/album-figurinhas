@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsUUID, Min, validateSync } from 'class-validator';
+import { IsNumber, IsUUID, Min, validateSync } from 'class-validator';
 
 export type AddDustUserInputConstructorProps = {
   id: string;
@@ -6,25 +6,25 @@ export type AddDustUserInputConstructorProps = {
 };
 
 export class AddDustUserInput {
-  @IsNotEmpty()
-  @IsUUID('all')
+  @IsUUID()
   id!: string;
 
   @IsNumber()
-  @IsNotEmpty()
   @Min(0)
   dust!: number;
 
   constructor(props?: AddDustUserInputConstructorProps) {
-    if (!props) return;
-    this.id = props.id;
-    this.dust = props.dust;
+    if (props) {
+      this.id = props.id;
+      this.dust = props.dust;
+    }
   }
 }
 
 export class ValidateAddDustUserInput {
-  static validate(input: AddDustUserInput) {
-    const errors = validateSync(new AddDustUserInput(input));
+  static validate(input: AddDustUserInputConstructorProps) {
+    const addDustUserInput = new AddDustUserInput(input);
+    const errors = validateSync(addDustUserInput);
     return errors;
   }
 }

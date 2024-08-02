@@ -1,4 +1,3 @@
-import type { ValidationError } from 'class-validator';
 import { NotFoundError } from '../../../../shared/domain/errors/not-found.error';
 import { EntityValidationError } from '../../../../shared/domain/validators/validation.error';
 import { Uuid } from '../../../../shared/domain/value-objects/uuid.vo';
@@ -108,39 +107,17 @@ describe('SubtractDustUserUseCase Integration Tests', () => {
     }
   });
 
-  it(`should't add dust to a user when dustBalance is bigger then 999999`, async () => {
-    const entity = User.fake().aUser().withDisplayName('test').withDustBalance(500).build();
-    repository.insert(entity);
-    await useCase
-      .execute({ id: entity.userId.id, dust: 1000000 })
-      .catch((error: EntityValidationError) => {
-        expect(error).toBeInstanceOf(EntityValidationError);
-        expect(error.error).toEqual([{ dustBalance: ['Dust balance must be less than 999999'] }]);
-      });
-  });
-
-  it(`should't add negavive dust quantity`, async () => {
-    const entity = User.fake().aUser().withDisplayName('test').withDustBalance(500).build();
-    repository.insert(entity);
-    await useCase
-      .execute({ id: entity.userId.id, dust: -10 })
-      .catch((error: EntityValidationError) => {
-        expect(error).toBeInstanceOf(EntityValidationError);
-        expect(error.error).toEqual([{ dustBalance: ['Dust balance must be less than 9999999'] }]);
-      });
-  });
-
-  it(`should throw validation error when dust is less then 0`, async () => {
+  it(`should throw when dust balance is less the 0`, async () => {
     const entity = User.fake().aUser().withDisplayName('test').withDustBalance(500).build();
     await repository.insert(entity);
+    // spy update method
+    const updateSpy = jest.spyOn(repository, 'update');
     await useCase
-      .execute({ id: entity.userId.id, dust: -10 })
-      .catch((errors: ValidationError[]) => {
-        expect(errors).toBeInstanceOf(Array);
-        expect(errors).toHaveLength(1);
-        expect(errors[0].constraints).toEqual({
-          min: 'dust must not be less than 0',
-        });
+      .execute({ id: entity.userId.id, dust: 600 })
+      .catch((error: EntityValidationError) => {
+        expect(error).toBeInstanceOf(EntityValidationError);
+        expect(error.error).toEqual([{ dustBalance: ['Dust balance must be greater than 0'] }]);
+        expect(updateSpy).not.toHaveBeenCalled();
       });
   });
 });
