@@ -24,6 +24,8 @@ export class AddDustUserInput {
 
 export class ValidateAddDustUserInput {
   static validate(input: AddDustUserInput) {
-    return validateSync(input);
+    const errors = validateSync(input);
+    console.log('errors', errors);
+    return errors;
   }
 }

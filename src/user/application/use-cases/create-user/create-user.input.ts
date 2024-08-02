@@ -2,7 +2,7 @@ import { IsBoolean, IsNotEmpty, IsOptional, IsString, validateSync } from 'class
 
 export type CreateUserInputConstructorProps = {
   displayName: string;
-  description?: string | null;
+  dustBalance?: number;
   isActive?: boolean;
 };
 
@@ -13,7 +13,7 @@ export class CreateUserInput {
 
   @IsString()
   @IsOptional()
-  description?: string | null;
+  dustBalance?: number;
 
   @IsBoolean()
   @IsOptional()
@@ -22,7 +22,7 @@ export class CreateUserInput {
   constructor(props: CreateUserInputConstructorProps) {
     if (!props) return;
     this.displayName = props.displayName;
-    this.description = props.description;
+    this.dustBalance = props.dustBalance;
     this.isActive = props.isActive;
   }
 }

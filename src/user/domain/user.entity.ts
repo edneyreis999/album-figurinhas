@@ -1,10 +1,8 @@
 import { Entity } from '../../shared/domain/entity';
-import { EntityValidationError } from '../../shared/domain/validators/validation.error';
 import type { ValueObject } from '../../shared/domain/value-object';
 import { Uuid } from '../../shared/domain/value-objects/uuid.vo';
-import { NegativeNumberNotAllowedError } from '../errors/negative-number-not-allowed-error';
 import { UserFakeBuilder } from './user-fake.builder';
-import { UserValidatorFactory } from './user.validator';
+import { UserValidatorFactory, type ValidFields } from './user.validator';
 
 export type UserConstructorProps = {
   userId?: Uuid;
@@ -42,29 +40,23 @@ export class User extends Entity {
 
   static create(props: UserCreateCommand): User {
     const user = new User(props);
-    User.validate(user);
+    user.validate(['displayName', 'dustBalance']);
     return user;
   }
 
   changeDisplayName(displayName: string): void {
     this.displayName = displayName;
-    User.validate(this);
+    this.validate(['displayName']);
   }
 
   addDust(amount: number): void {
-    if (amount < 0) {
-      throw new NegativeNumberNotAllowedError(`Could not add dust with negative amount`);
-    }
     this.dustBalance += amount;
-    User.validate(this);
+    this.validate(['dustBalance']);
   }
 
   subtractDust(amount: number): void {
-    if (amount < 0) {
-      throw new NegativeNumberNotAllowedError(`Could not subtract dust with negative amount`);
-    }
     this.dustBalance -= amount;
-    User.validate(this);
+    this.validate(['dustBalance']);
   }
 
   activate() {
@@ -75,12 +67,9 @@ export class User extends Entity {
     this.isActive = false;
   }
 
-  static validate(entity: User) {
+  validate(fields?: ValidFields[]) {
     const validator = UserValidatorFactory.create();
-    const isValid = validator.validate(entity);
-    if (!isValid) {
-      throw new EntityValidationError(validator.errors!);
-    }
+    return validator.validate(this.notification, this, fields);
   }
 
   static fake() {

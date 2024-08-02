@@ -1,4 +1,5 @@
 import { IUseCase } from '../../../../shared/application/use-case.interface';
+import { EntityValidationError } from '../../../../shared/domain/validators/validation.error';
 import { User } from '../../../domain/user.entity';
 import { IUserRepository } from '../../../domain/user.repository';
 import { UserOutputMapper, type UserOutput } from '../_user-shared/user-output';
@@ -8,11 +9,15 @@ export class CreateUserUseCase implements IUseCase<CreateUserInput, CreateUserOu
   constructor(private readonly userRepo: IUserRepository) {}
 
   async execute(input: CreateUserInput): Promise<CreateUserOutput> {
-    const entity = User.create(input);
+    const user = User.create(input);
 
-    await this.userRepo.insert(entity);
+    if (user.notification.hasErrors()) {
+      throw new EntityValidationError(user.notification.toJSON());
+    }
 
-    return UserOutputMapper.toOutput(entity);
+    await this.userRepo.insert(user);
+
+    return UserOutputMapper.toOutput(user);
   }
 }
 

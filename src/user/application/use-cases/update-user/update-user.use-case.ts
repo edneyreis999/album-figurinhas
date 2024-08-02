@@ -1,5 +1,6 @@
 import { IUseCase } from '../../../../shared/application/use-case.interface';
 import { NotFoundError } from '../../../../shared/domain/errors/not-found.error';
+import { EntityValidationError } from '../../../../shared/domain/validators/validation.error';
 import { Uuid } from '../../../../shared/domain/value-objects/uuid.vo';
 import { User } from '../../../domain/user.entity';
 import { IUserRepository } from '../../../domain/user.repository';
@@ -23,6 +24,10 @@ export class UpdateUserUseCase implements IUseCase<UpdateUserInput, UpdateUserOu
 
     if (input.isActive !== undefined) {
       input.isActive ? user.activate() : user.deactivate();
+    }
+
+    if (user.notification.hasErrors()) {
+      throw new EntityValidationError(user.notification.toJSON());
     }
 
     await this.userRepo.update(user);

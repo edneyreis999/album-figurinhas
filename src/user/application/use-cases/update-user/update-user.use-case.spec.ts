@@ -25,6 +25,17 @@ describe('UpdateUserUseCase Unit Tests', () => {
     );
   });
 
+  it('should throw an error when aggregate is not valid', async () => {
+    const aggregate = new User({ displayName: 'Movie' });
+    repository.items = [aggregate];
+    await expect(() =>
+      useCase.execute({
+        id: aggregate.userId.id,
+        displayName: 't'.repeat(256),
+      }),
+    ).rejects.toThrow('Entity Validation Error');
+  });
+
   it('should update a user', async () => {
     const spyUpdate = jest.spyOn(repository, 'update');
     const entity = new User({ displayName: 'Movie' });

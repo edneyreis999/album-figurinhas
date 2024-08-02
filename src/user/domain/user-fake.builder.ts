@@ -80,6 +80,7 @@ export class UserFakeBuilder<TBuild = any> {
           createdAt: this.callFactory(this._createdAt, index),
         }),
       });
+      user.validate();
       return user;
     });
     return this.countObjs === 1 ? (users[0] as any) : users;

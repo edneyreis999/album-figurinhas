@@ -1,12 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { EntityValidationError } from '../../shared/domain/validators/validation.error';
 import { Uuid } from '../../shared/domain/value-objects/uuid.vo';
 import { User } from './user.entity';
 
 describe('User Unit Tests', () => {
-  let validateSpy: any;
   beforeEach(() => {
-    validateSpy = jest.spyOn(User, 'validate');
+    User.prototype.validate = jest.fn().mockImplementation(User.prototype.validate);
   });
 
   describe('constructor', () => {
@@ -47,7 +45,9 @@ describe('User Unit Tests', () => {
       expect(user.dustBalance).toBe(0);
       expect(user.isActive).toBe(true);
       expect(user.createdAt).toBeInstanceOf(Date);
-      expect(validateSpy).toHaveBeenCalledTimes(1);
+      expect(User.prototype.validate).toHaveBeenCalledTimes(1);
+      console.log(user.notification.toJSON());
+      expect(user.notification.hasErrors()).toBe(false);
     });
 
     test('should create a user with all properties', () => {
@@ -61,7 +61,8 @@ describe('User Unit Tests', () => {
       expect(user.dustBalance).toBe(100);
       expect(user.isActive).toBe(false);
       expect(user.createdAt).toBeInstanceOf(Date);
-      expect(validateSpy).toHaveBeenCalledTimes(1);
+      expect(User.prototype.validate).toHaveBeenCalledTimes(1);
+      expect(user.notification.hasErrors()).toBe(false);
     });
   });
 
@@ -81,11 +82,12 @@ describe('User Unit Tests', () => {
 
   test('should change displayName', () => {
     const user = User.create({
-      displayName: 'John Doe',
+      displayName: 'Joao',
     });
     user.changeDisplayName('Jane Doe');
     expect(user.displayName).toBe('Jane Doe');
-    expect(validateSpy).toHaveBeenCalledTimes(2);
+    expect(User.prototype.validate).toHaveBeenCalledTimes(2);
+    expect(user.notification.hasErrors()).toBe(false);
   });
 
   test('should add dust to dustBalance', () => {
@@ -94,7 +96,8 @@ describe('User Unit Tests', () => {
     });
     user.addDust(50);
     expect(user.dustBalance).toBe(50);
-    expect(validateSpy).toHaveBeenCalledTimes(2);
+    expect(User.prototype.validate).toHaveBeenCalledTimes(2);
+    expect(user.notification.hasErrors()).toBe(false);
   });
 
   test('should subtract dust from dustBalance', () => {
@@ -104,7 +107,8 @@ describe('User Unit Tests', () => {
     });
     user.subtractDust(50);
     expect(user.dustBalance).toBe(50);
-    expect(validateSpy).toHaveBeenCalledTimes(2);
+    expect(User.prototype.validate).toHaveBeenCalledTimes(2);
+    expect(user.notification.hasErrors()).toBe(false);
   });
 
   test('should throw error when subtracting negative dust', () => {
@@ -112,7 +116,12 @@ describe('User Unit Tests', () => {
       displayName: 'John Doe',
       dustBalance: 50,
     });
-    expect(() => user.subtractDust(60)).toThrow(EntityValidationError);
+    user.subtractDust(60);
+    expect(User.prototype.validate).toHaveBeenCalledTimes(2);
+    expect(user.notification.hasErrors()).toBe(true);
+    expect(Object.fromEntries(user.notification.errors)).toEqual({
+      dustBalance: ['Dust balance must be greater than 0'],
+    });
   });
 
   test('should throw error when dust is more then 999999', () => {
@@ -120,7 +129,11 @@ describe('User Unit Tests', () => {
       displayName: 'John Doe',
       dustBalance: 50,
     });
-    expect(() => user.addDust(999999)).toThrow(EntityValidationError);
+    user.addDust(999999);
+    expect(user.notification.hasErrors()).toBe(true);
+    expect(Object.fromEntries(user.notification.errors)).toEqual({
+      dustBalance: ['Dust balance must be less than 999999'],
+    });
   });
 
   test('should throw error when subtracting more dust than available', () => {
@@ -128,7 +141,11 @@ describe('User Unit Tests', () => {
       displayName: 'John Doe',
       dustBalance: 50,
     });
-    expect(() => user.subtractDust(100)).toThrow(EntityValidationError);
+    user.subtractDust(100);
+    expect(user.notification.hasErrors()).toBe(true);
+    expect(Object.fromEntries(user.notification.errors)).toEqual({
+      dustBalance: ['Dust balance must be greater than 0'],
+    });
   });
 
   test('should activate a user', () => {
@@ -173,32 +190,79 @@ describe('User Unit Tests', () => {
 describe('User Validator', () => {
   describe('create command', () => {
     test('should throw an error for invalid displayName', () => {
-      expect(() => User.create({ displayName: null as any })).toThrow(EntityValidationError);
-      expect(() => User.create({ displayName: '' })).toThrow(EntityValidationError);
-      expect(() => User.create({ displayName: 5 as any })).toThrow(EntityValidationError);
-      expect(() => User.create({ displayName: 't'.repeat(31) })).toThrow(EntityValidationError);
+      const user = User.create({ displayName: 't'.repeat(31) });
+      expect(user.notification.hasErrors()).toBe(true);
+      expect(user.notification).notificationContainsErrorMessages([
+        {
+          displayName: ['Display name must be less than 30 characters'],
+        },
+      ]);
     });
 
-    test('should throw an error for invalid dustBalance', () => {
-      expect(() => User.create({ displayName: 'John Doe', dustBalance: -1 })).toThrow(
-        EntityValidationError,
-      );
+    test('should throw an error for dustBalance lass then 0', () => {
+      const user = User.create({ displayName: 'John Doe', dustBalance: -1 });
+      expect(user.notification.hasErrors()).toBe(true);
+      expect(user.notification).notificationContainsErrorMessages([
+        { dustBalance: ['Dust balance must be greater than 0'] },
+      ]);
     });
 
-    test('should throw an error for invalid isActive', () => {
-      expect(() => User.create({ displayName: 'John Doe', isActive: 5 as any })).toThrow(
-        EntityValidationError,
-      );
+    test('should throw an error for dustBalance bigger then 999999', () => {
+      const user = User.create({ displayName: 'John Doe', dustBalance: 1000000 });
+      expect(user.notification.hasErrors()).toBe(true);
+      expect(user.notification).notificationContainsErrorMessages([
+        { dustBalance: ['Dust balance must be less than 999999'] },
+      ]);
     });
   });
 
   describe('changeDisplayName method', () => {
     test('should throw an error for invalid displayName', () => {
       const user = User.create({ displayName: 'John Doe' });
-      expect(() => user.changeDisplayName(null as any)).toThrow(EntityValidationError);
-      expect(() => user.changeDisplayName('')).toThrow(EntityValidationError);
-      expect(() => user.changeDisplayName(5 as any)).toThrow(EntityValidationError);
-      expect(() => user.changeDisplayName('t'.repeat(256))).toThrow(EntityValidationError);
+      user.changeDisplayName('t'.repeat(256));
+
+      expect(user.notification.hasErrors()).toBe(true);
+      expect(user.notification).notificationContainsErrorMessages([
+        {
+          displayName: ['Display name must be less than 30 characters'],
+        },
+      ]);
+    });
+
+    test('should not throw an error for valid displayName', () => {
+      const user = User.create({ displayName: 'John Doe' });
+      user.changeDisplayName('Jane Doe');
+
+      expect(user.notification.hasErrors()).toBe(false);
+    });
+
+    test('should not throw an error for the same displayName', () => {
+      const user = User.create({ displayName: 'John Doe' });
+      user.changeDisplayName('John Doe');
+
+      expect(user.notification.hasErrors()).toBe(false);
+    });
+    // test dust balance
+
+    test('should throw an error for add dust more then 999999', () => {
+      const user = User.create({ displayName: 'John Doe' });
+      user.addDust(1000000);
+
+      expect(user.notification.hasErrors()).toBe(true);
+      expect(user.notification).notificationContainsErrorMessages([
+        { dustBalance: ['Dust balance must be less than 999999'] },
+      ]);
+    });
+
+    test('should throw an error for subtract dust lass then 0', () => {
+      const user = User.create({ displayName: 'John Doe' });
+      user.addDust(500);
+      user.subtractDust(600);
+
+      expect(user.notification.hasErrors()).toBe(true);
+      expect(user.notification).notificationContainsErrorMessages([
+        { dustBalance: ['Dust balance must be greater than 0'] },
+      ]);
     });
   });
 });

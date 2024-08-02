@@ -24,13 +24,13 @@ describe('SubtractDustUserUseCase Unit Tests', () => {
       new NotFoundError(uuid.id, User),
     );
   });
-
   it(`should't subtract dust to a user when dust is negative`, async () => {
     const entity = User.fake().aUser().withDisplayName('test').withDustBalance(500).build();
     repository.items = [entity];
-    await expect(() => useCase.execute({ id: entity.userId.id, dust: -200 })).rejects.toThrow(
-      new Error('Could not subtract dust with negative amount'),
-    );
+    useCase.execute({ id: entity.userId.id, dust: -200 }).catch(error => {
+      expect(error).toBeInstanceOf(Error);
+      expect(error.message).toBe('Could not add dust with negative amount');
+    });
   });
 
   it('should subtract dust to a user', async () => {

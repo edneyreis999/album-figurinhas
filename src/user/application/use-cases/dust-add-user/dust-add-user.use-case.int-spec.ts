@@ -1,4 +1,5 @@
 import { NotFoundError } from '../../../../shared/domain/errors/not-found.error';
+import { EntityValidationError } from '../../../../shared/domain/validators/validation.error';
 import { Uuid } from '../../../../shared/domain/value-objects/uuid.vo';
 import { setupSequelize } from '../../../../shared/infra/testing/helpers';
 import { User } from '../../../domain/user.entity';
@@ -106,11 +107,25 @@ describe('AddDustUserUseCase Integration Tests', () => {
     }
   });
 
-  it(`should't add dust to a user when dust is negative`, async () => {
+  it(`should't add dust to a user when dustBalance is bigger then 999999`, async () => {
     const entity = User.fake().aUser().withDisplayName('test').withDustBalance(500).build();
     repository.insert(entity);
-    await expect(() => useCase.execute({ id: entity.userId.id, dust: -200 })).rejects.toThrow(
-      new Error('Could not add dust with negative amount'),
-    );
+    await useCase
+      .execute({ id: entity.userId.id, dust: 1000000 })
+      .catch((error: EntityValidationError) => {
+        expect(error).toBeInstanceOf(EntityValidationError);
+        expect(error.error).toEqual([{ dustBalance: ['Dust balance must be less than 999999'] }]);
+      });
+  });
+
+  it(`should't add negavive dust quantity`, async () => {
+    const entity = User.fake().aUser().withDisplayName('test').withDustBalance(500).build();
+    repository.insert(entity);
+    await useCase
+      .execute({ id: entity.userId.id, dust: -10 })
+      .catch((error: EntityValidationError) => {
+        expect(error).toBeInstanceOf(EntityValidationError);
+        expect(error.error).toEqual([{ dustBalance: ['Dust balance must be less than 9999999'] }]);
+      });
   });
 });

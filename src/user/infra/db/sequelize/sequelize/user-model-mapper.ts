@@ -1,3 +1,4 @@
+import { EntityValidationError } from '../../../../../shared/domain/validators/validation.error';
 import { Uuid } from '../../../../../shared/domain/value-objects/uuid.vo';
 import { User } from '../../../../domain/user.entity';
 import { UserModel } from './user.model';
@@ -21,7 +22,11 @@ export class UserModelMapper {
       isActive: model.isActive,
       createdAt: model.createdAt,
     });
-    User.validate(entity);
+
+    entity.validate();
+    if (entity.notification.hasErrors()) {
+      throw new EntityValidationError(entity.notification.toJSON());
+    }
     return entity;
   }
 }

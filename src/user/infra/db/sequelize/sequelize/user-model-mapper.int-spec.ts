@@ -10,21 +10,19 @@ describe('UserModelMapper Integration Tests', () => {
   setupSequelize({ models: [UserModel] });
 
   it('should throws error when user is invalid', () => {
+    expect.assertions(2);
     const model = UserModel.build({
       userId: '9366b7dc-2d71-4799-b91c-c64adb205104',
+      displayName: 'a'.repeat(256),
     } as any);
     try {
       UserModelMapper.toEntity(model);
       fail('The user is valid, but it needs throws a EntityValidationError');
     } catch (e) {
       expect(e).toBeInstanceOf(EntityValidationError);
-      expect((e as EntityValidationError).error).toMatchObject({
-        displayName: [
-          'displayName should not be empty',
-          'displayName must be a string',
-          'Display name must be less than 30 characters',
-        ],
-      });
+      expect((e as EntityValidationError).error).toMatchObject([
+        { displayName: ['Display name must be less than 30 characters'] },
+      ]);
     }
   });
 
