@@ -1,3 +1,4 @@
+import type { ValidationError } from 'class-validator';
 import { NotFoundError } from '../../../../shared/domain/errors/not-found.error';
 import { EntityValidationError } from '../../../../shared/domain/validators/validation.error';
 import { Uuid } from '../../../../shared/domain/value-objects/uuid.vo';
@@ -126,6 +127,20 @@ describe('SubtractDustUserUseCase Integration Tests', () => {
       .catch((error: EntityValidationError) => {
         expect(error).toBeInstanceOf(EntityValidationError);
         expect(error.error).toEqual([{ dustBalance: ['Dust balance must be less than 9999999'] }]);
+      });
+  });
+
+  it(`should throw validation error when dust is less then 0`, async () => {
+    const entity = User.fake().aUser().withDisplayName('test').withDustBalance(500).build();
+    await repository.insert(entity);
+    await useCase
+      .execute({ id: entity.userId.id, dust: -10 })
+      .catch((errors: ValidationError[]) => {
+        expect(errors).toBeInstanceOf(Array);
+        expect(errors).toHaveLength(1);
+        expect(errors[0].constraints).toEqual({
+          min: 'dust must not be less than 0',
+        });
       });
   });
 });

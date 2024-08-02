@@ -1,3 +1,4 @@
+import type { ValidationError } from 'class-validator';
 import { NotFoundError } from '../../../../shared/domain/errors/not-found.error';
 import { EntityValidationError } from '../../../../shared/domain/validators/validation.error';
 import { Uuid } from '../../../../shared/domain/value-objects/uuid.vo';
@@ -27,7 +28,7 @@ describe('AddDustUserUseCase Integration Tests', () => {
 
   it('should add dust to a user', async () => {
     const entity = User.fake().aUser().withDisplayName('test').build();
-    repository.insert(entity);
+    await repository.insert(entity);
 
     let output = await useCase.execute({
       id: entity.userId.id,
@@ -109,7 +110,7 @@ describe('AddDustUserUseCase Integration Tests', () => {
 
   it(`should't add dust to a user when dustBalance is bigger then 999999`, async () => {
     const entity = User.fake().aUser().withDisplayName('test').withDustBalance(500).build();
-    repository.insert(entity);
+    await repository.insert(entity);
     await useCase
       .execute({ id: entity.userId.id, dust: 1000000 })
       .catch((error: EntityValidationError) => {
@@ -118,14 +119,17 @@ describe('AddDustUserUseCase Integration Tests', () => {
       });
   });
 
-  it(`should't add negavive dust quantity`, async () => {
+  it(`should throw validation error when dust is less then 0`, async () => {
     const entity = User.fake().aUser().withDisplayName('test').withDustBalance(500).build();
-    repository.insert(entity);
+    await repository.insert(entity);
     await useCase
       .execute({ id: entity.userId.id, dust: -10 })
-      .catch((error: EntityValidationError) => {
-        expect(error).toBeInstanceOf(EntityValidationError);
-        expect(error.error).toEqual([{ dustBalance: ['Dust balance must be less than 9999999'] }]);
+      .catch((errors: ValidationError[]) => {
+        expect(errors).toBeInstanceOf(Array);
+        expect(errors).toHaveLength(1);
+        expect(errors[0].constraints).toEqual({
+          min: 'dust must not be less than 0',
+        });
       });
   });
 });
