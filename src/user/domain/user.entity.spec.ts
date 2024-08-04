@@ -46,7 +46,6 @@ describe('User Unit Tests', () => {
       expect(user.isActive).toBe(true);
       expect(user.createdAt).toBeInstanceOf(Date);
       expect(User.prototype.validate).toHaveBeenCalledTimes(1);
-      console.log(user.notification.toJSON());
       expect(user.notification.hasErrors()).toBe(false);
     });
 
@@ -185,6 +184,64 @@ describe('User Unit Tests', () => {
       createdAt: user.createdAt,
     });
   });
+
+  test('should not allow invalid display name', () => {
+    const invalidDisplayName = 'a'.repeat(256);
+    const user = User.create({
+      displayName: 'John Doe',
+    });
+    user.changeDisplayName(invalidDisplayName);
+    expect(user.notification.hasErrors()).toBe(true);
+    expect(Object.fromEntries(user.notification.errors)).toEqual({
+      displayName: ['Display name must be less than 30 characters'],
+    });
+  });
+
+  test('should handle validation for other fields', () => {
+    const user = User.create({
+      displayName: 'John Doe',
+      dustBalance: -1,
+    });
+    expect(user.notification.hasErrors()).toBe(true);
+    expect(Object.fromEntries(user.notification.errors)).toEqual({
+      dustBalance: ['Dust balance must be greater than 0'],
+    });
+
+    const user2 = User.create({
+      displayName: 'John Doe',
+      dustBalance: 1000000,
+    });
+    expect(user2.notification.hasErrors()).toBe(true);
+    expect(Object.fromEntries(user2.notification.errors)).toEqual({
+      dustBalance: ['Dust balance must be less than 999999'],
+    });
+  });
+
+  test('should validate user creation with invalid displayName', () => {
+    const user = User.create({ displayName: 't'.repeat(31) });
+    expect(user.notification.hasErrors()).toBe(true);
+    expect(user.notification).notificationContainsErrorMessages([
+      {
+        displayName: ['Display name must be less than 30 characters'],
+      },
+    ]);
+  });
+
+  test('should validate user creation with invalid dustBalance', () => {
+    const user = User.create({ displayName: 'John Doe', dustBalance: -1 });
+    expect(user.notification.hasErrors()).toBe(true);
+    expect(user.notification).notificationContainsErrorMessages([
+      { dustBalance: ['Dust balance must be greater than 0'] },
+    ]);
+  });
+
+  test('should validate user creation with excessive dustBalance', () => {
+    const user = User.create({ displayName: 'John Doe', dustBalance: 1000000 });
+    expect(user.notification.hasErrors()).toBe(true);
+    expect(user.notification).notificationContainsErrorMessages([
+      { dustBalance: ['Dust balance must be less than 999999'] },
+    ]);
+  });
 });
 
 describe('User Validator', () => {
@@ -199,7 +256,7 @@ describe('User Validator', () => {
       ]);
     });
 
-    test('should throw an error for dustBalance lass then 0', () => {
+    test('should throw an error for dustBalance less than 0', () => {
       const user = User.create({ displayName: 'John Doe', dustBalance: -1 });
       expect(user.notification.hasErrors()).toBe(true);
       expect(user.notification).notificationContainsErrorMessages([
@@ -207,7 +264,7 @@ describe('User Validator', () => {
       ]);
     });
 
-    test('should throw an error for dustBalance bigger then 999999', () => {
+    test('should throw an error for dustBalance greater than 999999', () => {
       const user = User.create({ displayName: 'John Doe', dustBalance: 1000000 });
       expect(user.notification.hasErrors()).toBe(true);
       expect(user.notification).notificationContainsErrorMessages([
@@ -242,9 +299,8 @@ describe('User Validator', () => {
 
       expect(user.notification.hasErrors()).toBe(false);
     });
-    // test dust balance
 
-    test('should throw an error for add dust more then 999999', () => {
+    test('should throw an error for adding dust more than 999999', () => {
       const user = User.create({ displayName: 'John Doe' });
       user.addDust(1000000);
 
@@ -254,7 +310,7 @@ describe('User Validator', () => {
       ]);
     });
 
-    test('should throw an error for subtract dust lass then 0', () => {
+    test('should throw an error for subtracting dust less than 0', () => {
       const user = User.create({ displayName: 'John Doe' });
       user.addDust(500);
       user.subtractDust(600);
