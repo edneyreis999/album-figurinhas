@@ -1,4 +1,4 @@
-import { IsBoolean, IsNotEmpty, IsOptional, IsString, validateSync } from 'class-validator';
+import { IsBoolean, IsOptional, IsString, IsUUID, validateSync } from 'class-validator';
 
 export type UpdateUserInputConstructorProps = {
   id: string;
@@ -7,8 +7,7 @@ export type UpdateUserInputConstructorProps = {
 };
 
 export class UpdateUserInput {
-  @IsString()
-  @IsNotEmpty()
+  @IsUUID()
   id!: string;
 
   @IsString()
@@ -28,7 +27,9 @@ export class UpdateUserInput {
 }
 
 export class ValidateUpdateUserInput {
-  static validate(input: UpdateUserInput) {
-    return validateSync(input);
+  static validate(input: UpdateUserInputConstructorProps) {
+    const addDustUserInput = new UpdateUserInput(input);
+    const errors = validateSync(addDustUserInput);
+    return errors;
   }
 }

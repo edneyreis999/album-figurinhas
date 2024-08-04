@@ -26,7 +26,11 @@ describe('GetUserUseCase Integration Tests', () => {
   it('should returns a user', async () => {
     const user = User.fake().aUser().build();
     await repository.insert(user);
+
+    const spyUpdate = jest.spyOn(repository, 'findById');
     const output = await useCase.execute({ id: user.userId.id });
+
+    expect(spyUpdate).toHaveBeenCalledTimes(1);
     expect(output).toStrictEqual({
       id: user.userId.id,
       displayName: user.displayName,

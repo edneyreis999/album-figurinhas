@@ -14,10 +14,10 @@ export class AddDustUserInput {
   dust!: number;
 
   constructor(props?: AddDustUserInputConstructorProps) {
-    if (props) {
-      this.id = props.id;
-      this.dust = props.dust;
-    }
+    if (!props) return;
+
+    this.id = props.id;
+    this.dust = props.dust;
   }
 }
 

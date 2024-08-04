@@ -1,4 +1,13 @@
-import { IsBoolean, IsNotEmpty, IsOptional, IsString, validateSync } from 'class-validator';
+import {
+  IsBoolean,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  Max,
+  Min,
+  validateSync,
+} from 'class-validator';
 
 export type CreateUserInputConstructorProps = {
   displayName: string;
@@ -11,8 +20,10 @@ export class CreateUserInput {
   @IsNotEmpty()
   displayName!: string;
 
-  @IsString()
+  @IsNumber()
   @IsOptional()
+  @Min(0)
+  @Max(999999)
   dustBalance?: number;
 
   @IsBoolean()
@@ -21,14 +32,17 @@ export class CreateUserInput {
 
   constructor(props: CreateUserInputConstructorProps) {
     if (!props) return;
+
     this.displayName = props.displayName;
-    this.dustBalance = props.dustBalance;
-    this.isActive = props.isActive;
+    props.dustBalance && (this.dustBalance = props.dustBalance);
+    props.isActive && (this.isActive = props.isActive);
   }
 }
 
 export class ValidateCreateUserInput {
-  static validate(input: CreateUserInput) {
-    return validateSync(input);
+  static validate(input: CreateUserInputConstructorProps) {
+    const createUserInput = new CreateUserInput(input);
+    const errors = validateSync(createUserInput);
+    return errors;
   }
 }

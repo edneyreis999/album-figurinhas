@@ -110,6 +110,7 @@ describe('SubtractDustUserUseCase Integration Tests', () => {
   it(`should throw when dust balance is less the 0`, async () => {
     const entity = User.fake().aUser().withDisplayName('test').withDustBalance(500).build();
     await repository.insert(entity);
+
     // spy update method
     const updateSpy = jest.spyOn(repository, 'update');
     await useCase

@@ -24,6 +24,7 @@ describe('ListUsersUseCase Integration Tests', () => {
 
     await repository.bulkInsert(users);
     const output = await useCase.execute({});
+    console.log(output);
     expect(output).toEqual({
       items: [...users].reverse().map(UserOutputMapper.toOutput),
       total: 2,
@@ -50,6 +51,7 @@ describe('ListUsersUseCase Integration Tests', () => {
       }),
     ];
     await repository.bulkInsert(users);
+    const spyUpdate = jest.spyOn(repository, 'search');
 
     let output = await useCase.execute({
       page: 1,
@@ -57,6 +59,7 @@ describe('ListUsersUseCase Integration Tests', () => {
       sort: 'displayName',
       filter: 'a',
     });
+    expect(spyUpdate).toHaveBeenCalledTimes(1);
     expect(output).toEqual({
       items: [users[1], users[2]].map(UserOutputMapper.toOutput),
       total: 3,

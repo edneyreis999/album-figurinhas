@@ -27,9 +27,12 @@ describe('DeleteUserUseCase Integration Tests', () => {
   it('should delete a user', async () => {
     const user = User.fake().aUser().build();
     await repository.insert(user);
+
+    const updateSpy = jest.spyOn(repository, 'delete');
     await useCase.execute({
       id: user.userId.id,
     });
     await expect(repository.findById(user.userId)).resolves.toBeNull();
+    expect(updateSpy).toHaveBeenCalledTimes(1);
   });
 });

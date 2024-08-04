@@ -15,6 +15,7 @@ export class SubtractDustUserInput {
 
   constructor(props?: SubtractDustUserInputConstructorProps) {
     if (!props) return;
+
     this.id = props.id;
     this.dust = props.dust;
   }

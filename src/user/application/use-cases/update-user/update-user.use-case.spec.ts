@@ -1,5 +1,6 @@
+import type { ValidationError } from 'class-validator';
 import { NotFoundError } from '../../../../shared/domain/errors/not-found.error';
-import { InvalidUuidError, Uuid } from '../../../../shared/domain/value-objects/uuid.vo';
+import { Uuid } from '../../../../shared/domain/value-objects/uuid.vo';
 import { User } from '../../../domain/user.entity';
 import { UserInMemoryRepository } from '../../../infra/db/in-memory/user-in-memory.repository';
 import { UpdateUserUseCase } from './update-user.use-case';
@@ -14,15 +15,57 @@ describe('UpdateUserUseCase Unit Tests', () => {
   });
 
   it('should throws error when entity not found', async () => {
-    await expect(() => useCase.execute({ id: 'fake id', displayName: 'fake' })).rejects.toThrow(
-      new InvalidUuidError(),
-    );
-
     const uuid = new Uuid();
 
-    await expect(() => useCase.execute({ id: uuid.id, displayName: 'fake' })).rejects.toThrow(
+    await expect(() => useCase.execute({ id: uuid.id })).rejects.toThrow(
       new NotFoundError(uuid.id, User),
     );
+  });
+
+  it('should throw validation error when id is null or undefined', async () => {
+    await useCase.execute({ id: null as any }).catch((errors: ValidationError[]) => {
+      expect(errors).toBeInstanceOf(Array);
+      expect(errors).toHaveLength(1);
+      expect(errors[0].constraints).toEqual({
+        isUuid: 'id must be a UUID',
+      });
+    });
+
+    await useCase.execute({ id: undefined as any }).catch((errors: ValidationError[]) => {
+      expect(errors).toBeInstanceOf(Array);
+      expect(errors).toHaveLength(1);
+      expect(errors[0].constraints).toEqual({
+        isUuid: 'id must be a UUID',
+      });
+    });
+  });
+
+  it(`should throw validation error when id is not a valid uuid`, async () => {
+    await useCase.execute({ id: 'invalid-uuid' }).catch((errors: ValidationError[]) => {
+      expect(errors).toBeInstanceOf(Array);
+      expect(errors).toHaveLength(1);
+      expect(errors[0].constraints).toEqual({
+        isUuid: 'id must be a UUID',
+      });
+    });
+  });
+
+  it('should thorw validation error when id is null or undefined', async () => {
+    await useCase.execute({ id: null as any }).catch((errors: ValidationError[]) => {
+      expect(errors).toBeInstanceOf(Array);
+      expect(errors).toHaveLength(1);
+      expect(errors[0].constraints).toEqual({
+        isUuid: 'id must be a UUID',
+      });
+    });
+
+    await useCase.execute({ id: undefined as any }).catch((errors: ValidationError[]) => {
+      expect(errors).toBeInstanceOf(Array);
+      expect(errors).toHaveLength(1);
+      expect(errors[0].constraints).toEqual({
+        isUuid: 'id must be a UUID',
+      });
+    });
   });
 
   it('should throw an error when aggregate is not valid', async () => {

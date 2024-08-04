@@ -114,6 +114,7 @@ describe('AddDustUserUseCase Unit Tests', () => {
 
   it(`should throw validation error when dust is less then 0`, async () => {
     const entity = User.fake().aUser().withDisplayName('test').withDustBalance(500).build();
+    expect.assertions(3);
     await repository.insert(entity);
     await useCase
       .execute({ id: entity.userId.id, dust: -10 })

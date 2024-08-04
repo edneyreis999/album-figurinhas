@@ -28,10 +28,13 @@ describe('UpdateUserUseCase Integration Tests', () => {
     const entity = User.fake().aUser().build();
     repository.insert(entity);
 
+    const spyUpdate = jest.spyOn(repository, 'update');
+
     let output = await useCase.execute({
       id: entity.userId.id,
       displayName: 'test',
     });
+    expect(spyUpdate).toHaveBeenCalledTimes(1);
     expect(output).toStrictEqual({
       id: entity.userId.id,
       displayName: 'test',
